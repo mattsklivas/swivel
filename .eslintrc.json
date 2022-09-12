@@ -4,6 +4,7 @@
         "es2021": true
     },
     "extends": [
+        "next/core-web-vitals",
         "plugin:react/recommended",
         "airbnb",
         "prettier"
@@ -15,13 +16,43 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react", 
+        "unused-imports", 
+        "import-quotes"
     ],
     "rules": {
       "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-       "import/no-extraneous-dependencies": ["error",  {"devDependencies": true}]
-    },
-    "devDependencies": {
-      "eslint-config-airbnb": "^18.1.0"
+      "camelcase": [
+        "error",
+        {
+            "properties": "never"
+        }
+        ],
+        "react-hooks/exhaustive-deps": "off",
+        "react/jsx-props-no-spreading": "off",
+        "react/prop-types": "off",
+        "no-unused-vars": "warn",
+        "no-multiple-empty-lines": [
+        "error",
+        {
+            "max": 1
+        }
+        ],
+
+        "unused-imports/no-unused-imports": "error",
+        "semi": ["error", "never"],
+        "padded-blocks": ["error", "never"],
+
+        "import-quotes/import-quotes": [1, "single"],
+
+        "jsx-quotes": ["error", "prefer-double"],
+
+        "quotes": ["error", "single"],
+
+        "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+
+        "no-var": "error",
+
+        "react/jsx-indent-props":["error", "first"]
     }
 }

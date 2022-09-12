@@ -1,7 +1,11 @@
-import { Button, Space, DatePicker, Card } from 'antd';
+// Import React
+import React from 'react'
+
+// Import Antd elements
+import { Button, Space, DatePicker } from 'antd'
 
 function Home() {
-  const onChange = () => {};
+  const onChange = () => {}
   return (
     <div style={{ padding: 100 }}>
       <Space direction="vertical">
@@ -10,7 +14,7 @@ function Home() {
         <DatePicker onChange={onChange} />
       </Space>
     </div>
-  );
+  )
 }
 
 // function Index() {
