@@ -1,4 +1,3 @@
-import './node_modules/antd/dist/antd.css';
 import { Button, Space, DatePicker, Card } from 'antd';
 
 function Home() {
