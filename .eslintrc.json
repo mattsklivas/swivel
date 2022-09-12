@@ -20,6 +20,14 @@
         "unused-imports", 
         "import-quotes"
     ],
+    "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["src"],
+        "extensions": [".js"]
+      }
+    }
+  },
     "rules": {
       "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
       "camelcase": [
@@ -53,6 +61,9 @@
 
         "no-var": "error",
 
-        "react/jsx-indent-props":["error", "first"]
+        "react/jsx-indent-props":["error", "first"],
+
+        "global-require": "off",
+        "arrow-body-style": "off"
     }
 }
