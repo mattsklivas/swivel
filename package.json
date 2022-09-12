@@ -16,7 +16,8 @@
     "build": "next build ./src",
     "start": "next start ./src",
     "lint": "next lint --fix",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "pre-commit": "next lint"
   },
   "devDependencies": {
     "eslint": "^7.32.0 || ^8.2.0",
