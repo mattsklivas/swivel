@@ -2,7 +2,7 @@
 import React from 'react'
 
 // Antd-specific imports
-import 'antd/dist/antd.css'
+require('../styles/variables.less')
 
 function App({ Component, pageProps }) {
   return <Component {...pageProps} />

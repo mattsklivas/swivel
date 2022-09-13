@@ -1,4 +1,4 @@
-const path = require('path')
+const withAntdLess = require('next-plugin-antd-less')
 
 module.exports = {
   env: {
@@ -7,8 +7,11 @@ module.exports = {
   eslint: {
     dirs: ['src/pages', 'src/components', 'src/hooks'
     ],
-  },
-  sassOptions: {
-    includePaths: [path.join(__dirname, 'styles')]
   }
 }
+
+// Modify Antd default styling
+module.exports = withAntdLess({
+    // Less variables path
+    lessVarsFilePath: './src/styles/variables.less',
+})
