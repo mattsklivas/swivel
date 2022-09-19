@@ -5,9 +5,12 @@ module.exports = {
     API_URL: process.env.API_URL || 'http://localhost:3000/'
   },
   eslint: {
-    dirs: ['src/pages', 'src/components', 'src/hooks'
+    dirs: ['src/pages', 'src/components', 'src/hooks', 'src/helpers'
     ],
-  }
+  },
+  serverRuntimeConfig: {
+    secretKey: 'swivel12345'
+  },
 }
 
 // Modify Antd default styling

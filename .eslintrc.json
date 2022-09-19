@@ -64,6 +64,10 @@
         "react/jsx-indent-props":["error", "first"],
 
         "global-require": "off",
-        "arrow-body-style": "off"
+        "arrow-body-style": "off",
+        "consistent-return": "off",
+        "func-names": "off",
+        "no-param-reassign": "off",
+        "prefer-destructuring": "off"
     }
 }

@@ -3,11 +3,16 @@
   "private": true,
   "dependencies": {
     "antd": "^4.20.7",
+    "axios": "^0.27.2",
     "babel-plugin-import": "^1.13.5",
+    "bcrypt": "^5.0.1",
     "eslint-plugin-import-quotes": "^0.0.1",
     "eslint-plugin-unused-imports": "^2.0.0",
     "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.6.1",
     "next": "12.2",
+    "next-auth": "^4.10.3",
     "next-plugin-antd-less": "^1.8.0",
     "nodemon": "^2.0.19",
     "react": "18.2.0",
@@ -22,7 +27,7 @@
     "lint": "next lint --fix",
     "prepare": "husky install",
     "pre-commit": "next lint",
-    "dev-server": "nodemon ./src/server/index.js"
+    "dev-server": "nodemon ./src/server/server.js"
   },
   "devDependencies": {
     "eslint": "^7.32.0 || ^8.2.0",
