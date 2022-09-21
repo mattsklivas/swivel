@@ -22,8 +22,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "dev": "next dev ./src",
-    "build": "next build ./src",
+    "dev": "next ",
+    "build": "next build ",
     "start": "next start ./src",
     "lint": "next lint --fix",
     "prepare": "husky install",
