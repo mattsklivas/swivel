@@ -6,8 +6,8 @@ export default function Protected() {
   return <div>Protected page</div>
 }
 
-export const getServerSideProps = auth0.getServerSidePropsWrapper(async (ctx) => {
-  const session = auth0.getSession(ctx.req, ctx.res)
+export const getServerSideProps = auth0.getServerSidePropsWrapper(async (context) => {
+  const session = auth0.getSession(context.req, context.res)
   if (session) {
     // User is authenticated
   } else {
