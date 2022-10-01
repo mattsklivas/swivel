@@ -2,7 +2,7 @@
   "name": "swivel",
   "private": true,
   "dependencies": {
-    "antd": "^4.20.7",
+    "antd": "^4.23.3",
     "babel-plugin-import": "^1.13.5",
     "eslint-plugin-import-quotes": "^0.0.1",
     "eslint-plugin-unused-imports": "^2.0.0",
