@@ -19,9 +19,7 @@ const jwtCheck = expressJwt({
         jwksRequestsPerMinute: 5,
         jwksUri: `${AUTH0_ISSUER_BASE_URL}/.well-known/jwks.json`
     }),
-    // audience: `${AUTH0_ISSUER_BASE_URL}/api/v2/`,
     audience: 'https://intro/api',
-    // issuer: 'https://dev-gl5357kx.us.auth0.com/',
     algorithms: ['RS256'],
 })
 

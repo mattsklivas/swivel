@@ -17,7 +17,7 @@ export default function Home({accessToken}) {
 
     const privateEnd = async () => {
         await fetcher(token, 'api/sample/private', {
-            method: 'GET',
+            method: 'GET'
         })
         .then( (res) => {
             const data = res.json()
@@ -28,6 +28,7 @@ export default function Home({accessToken}) {
             })
         })
         .catch((err) => {
+            console.log(err)
             setState({
                 ...state,
                 error: err.error
