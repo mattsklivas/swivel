@@ -47,7 +47,7 @@ export default function (token, url, options) {
             .catch(error => {
                 notification.open({
                     type: 'error',
-                    description: `Error: ${error}`,
+                    description: error,
                 })
 
                 reject(error)
