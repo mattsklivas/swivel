@@ -48,10 +48,6 @@ function routes(app) {
                 })
             }
 
-            // TODO: JWT token creation
-            // // Create a JSON web token with an expiry of 7 days
-            // const token = JWT.sign({ user: userDetails.username }, config.secretKey, { expiresIn: '7d' })
-
             res.status(200).send({
                 userName: userDetails.username,
                 message: 'Login successful',

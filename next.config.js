@@ -8,9 +8,6 @@ module.exports = {
     dirs: ['src/pages', 'src/components', 'src/hooks', 'src/helpers'
     ],
   },
-  serverRuntimeConfig: {
-    secretKey: 'swivel12345'
-  },
 }
 
 // Modify Antd default styling

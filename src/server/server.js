@@ -8,7 +8,7 @@ const mongoose = require('mongoose')
 // Port and dev environment
 const PORT = process.env.PORT || 3000
 const dev = process.env.NODE_ENV !== 'production'
-const appO =  'http://localhost:3000'
+const API_URL = process.env.API_URL || 'http://localhost:3000/'
 const DB_URL = dev ? 'mongodb://localhost:27017' : process.env.DATABASE_URL
 
 const jwtCheck = expressJwt({
@@ -40,7 +40,7 @@ const app = next({ dir: './src', dev })
 // Request handler
 const handle = app.getRequestHandler()
 const server = express()
-server.use(cors({origin:appO}))
+server.use(cors({origin: API_URL}))
 
 // Create express server
 app.prepare().then(() => {
