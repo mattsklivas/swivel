@@ -6,7 +6,7 @@ const jwks = require('jwks-rsa')
 const mongoose = require('mongoose')
 
 // Port and dev environment
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const appO =  'http://localhost:3000'
 const DB_URL = dev ? 'mongodb://localhost:27017' : process.env.DATABASE_URL

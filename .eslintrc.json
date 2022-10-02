@@ -21,12 +21,12 @@
         "import-quotes"
     ],
     "settings": {
-    "import/resolver": {
-      "node": {
-        "paths": ["src"],
-        "extensions": [".js"]
+      "import/resolver": {
+        "node": {
+          "paths": ["node_modules", "src/"],
+          "extensions": [".js"]
+        }
       }
-    }
   },
     "rules": {
       "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],

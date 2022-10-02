@@ -5,7 +5,7 @@ import {useUser } from '@auth0/nextjs-auth0'
 import auth0 from './auth0'
 // import fetcher from '../helpers/fetcher'
 
-const apiO = 'http://localhost:3001' 
+const apiO = 'http://localhost:3000' 
 
 export default function Home({at}) {
     const {user, error, isLoading} = useUser()
