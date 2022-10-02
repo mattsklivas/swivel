@@ -46,11 +46,11 @@ server.use(cors({origin: API_URL}))
 app.prepare().then(() => {
     // Include 'user' routes
     const userRoutes = require('./routes/user')
-    server.use('/api/user', userRoutes(server))
+    server.use('/api/user', jwtCheck, userRoutes(server))
 
     // include 'sample' routes, only a demo for using jwttoken authorization
     const sampleRoute = require('./routes/sample')
-    server.use('/api/sample',jwtCheck, sampleRoute(server)) // pass the jwtCheck to authorize token
+    server.use('/api/sample', jwtCheck, sampleRoute(server)) // pass the jwtCheck to authorize token
     
     // Obtain any route and handle the request
     server.get('*', (req, res) => handle(req, res) )
