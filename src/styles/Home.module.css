@@ -1,0 +1,14 @@
+.title {
+    color: #333;
+    padding-bottom: 20px;
+    text-align: center;
+  }
+  .text {
+    color: #777;
+  }
+  .btn {
+    display: block;
+    margin: 20px auto;
+    border-radius: 4px;
+  }
+

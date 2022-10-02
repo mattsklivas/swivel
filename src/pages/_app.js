@@ -1,6 +1,7 @@
 // Import React
 import React from 'react'
 import Layout from '../components/Layout'
+import '../styles/global.css'
 
 // Antd-specific imports
 require('../styles/variables.less')
