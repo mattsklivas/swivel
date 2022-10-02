@@ -1,19 +1,28 @@
 const express = require('express')
+const cors = require('cors')
 const next = require('next')
+const {expressjwt: expressJwt} = require('express-jwt')
+const jwks = require('jwks-rsa')
 const mongoose = require('mongoose')
 
 // Port and dev environment
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3001
 const dev = process.env.NODE_ENV !== 'production'
+const appO =  'http://localhost:3000'
 const DB_URL = dev ? 'mongodb://localhost:27017' : process.env.DATABASE_URL
 
-// Get next app
-const app = next({ dir: './src', dev })
+const jwtCheck = expressJwt({
+    secret: jwks.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: 'https://dev-gl5357kx.us.auth0.com/.well-known/jwks.json'
+    }),
+    audience: 'https://intro/api',
+    issuer: 'https://dev-gl5357kx.us.auth0.com/',
+    algorithms: ['RS256'],
+})
 
-// Request handler
-const handle = app.getRequestHandler()
-
-// Connect to MongoDB
 if (dev) {
     // Local connection
     mongoose
@@ -26,14 +35,23 @@ if (dev) {
     // TODO: MongoDB connection over Atlas
 }
 
+// Get next app
+const app = next({ dir: './src', dev })
+// Request handler
+const handle = app.getRequestHandler()
+const server = express()
+server.use(cors({origin:appO}))
+
 // Create express server
 app.prepare().then(() => {
-    const server = express()
-
     // Include 'user' routes
     const userRoutes = require('./routes/user')
     server.use('/api/user', userRoutes(server))
 
+    // include 'sample' routes, only a demo for using jwttoken authorization
+    const sampleRoute = require('./routes/sample')
+    server.use('/api/sample',jwtCheck, sampleRoute(server)) // pass the jwtCheck to authorize token
+    
     // Obtain any route and handle the request
     server.get('*', (req, res) => handle(req, res) )
 

@@ -4,3 +4,5 @@ src/.next/
 package-lock.json
 .DS_Store
 yarn.lock
+.env
+.env.local
