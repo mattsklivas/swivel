@@ -10,16 +10,18 @@ const PORT = process.env.PORT || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const API_URL = process.env.API_URL || 'http://localhost:3000/'
 const DB_URL = dev ? 'mongodb://localhost:27017' : process.env.DATABASE_URL
+const AUTH0_ISSUER_BASE_URL = process.env.AUTH0_ISSUER_BASE_URL
 
 const jwtCheck = expressJwt({
     secret: jwks.expressJwtSecret({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: 'https://dev-gl5357kx.us.auth0.com/.well-known/jwks.json'
+        jwksUri: `${AUTH0_ISSUER_BASE_URL}/.well-known/jwks.json`
     }),
+    // audience: `${AUTH0_ISSUER_BASE_URL}/api/v2/`,
     audience: 'https://intro/api',
-    issuer: 'https://dev-gl5357kx.us.auth0.com/',
+    // issuer: 'https://dev-gl5357kx.us.auth0.com/',
     algorithms: ['RS256'],
 })
 

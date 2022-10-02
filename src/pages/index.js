@@ -1,7 +1,7 @@
 // Import React
 import React, { useState } from 'react'
 import Link from 'next/link'
-import {useUser } from '@auth0/nextjs-auth0'
+import { useUser } from '@auth0/nextjs-auth0'
 import auth0 from './auth0'
 import fetcher from '../helpers/fetcher'
 
@@ -55,7 +55,7 @@ export default function Home({accessToken}) {
         return(
             <div>
                 <h1>
-                    {user.name} has logged in 
+                    {user.nickname} has logged in 
                 </h1> 
 
                 <Link href="/api/auth/logout">
@@ -145,7 +145,7 @@ export async function getServerSideProps(context) {
     // Fetch data from external API
     let accessToken = auth0.getSession(context.req, context.res) || null
     if (accessToken != null)  {
-        accessToken = accessToken.accessToken
+        accessToken = accessToken.idToken
     }
 
     // Pass data to the page via props
