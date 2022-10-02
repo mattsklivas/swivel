@@ -5,25 +5,22 @@ const dev = process.env.NODE_ENV !== 'production'
 const API_URL = process.env.API_URL || 'http://localhost:3000/'
 
 // 
-const updateOptions = (options) => {
+const updateOptions = (token, options) => {
     const update = { ...options }
 
-    // TODO: Append user auth before making a call to the backend
-    // if (localStorage.api) {
-    //     update.headers = {
-    //         ...update.headers,
-    //         Authorization: `Bearer ${localStorage.api}`,
-    //     }
-    // }
+    update.headers = {
+        ...update.headers,
+        Authorization: `Bearer ${token}`,
+    }
 
     return update
 }
 
-export default function (url, options) {
+export default function (token, url, options) {
     url = `${API_URL}${url}`
 
     return new Promise((resolve, reject) => {
-        fetch(url, updateOptions(options))
+        fetch(url, updateOptions(token, options))
             .then(async response => {
                 if (!response.ok) {
                     const json = await response.json()

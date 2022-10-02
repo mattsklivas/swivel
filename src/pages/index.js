@@ -3,13 +3,11 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import {useUser } from '@auth0/nextjs-auth0'
 import auth0 from './auth0'
-// import fetcher from '../helpers/fetcher'
+import fetcher from '../helpers/fetcher'
 
-const apiO = 'http://localhost:3000' 
-
-export default function Home({at}) {
+export default function Home({accessToken}) {
     const {user, error, isLoading} = useUser()
-    const token = at
+    const token = accessToken
 
     const [state, setState] = useState({
         showResult: false,
@@ -17,27 +15,24 @@ export default function Home({at}) {
         error: null
     })
 
-    const privateEnd = async() => {
-        try{
-            const response= await fetch(`${apiO}/api/sample/private`,{
-                method: 'GET',
-                headers:{
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            const data = await response.json()
+    const privateEnd = async () => {
+        await fetcher(token, 'api/sample/private', {
+            method: 'GET',
+        })
+        .then( (res) => {
+            const data = res.json()
             setState({
                 ...state,
-                showResult:true,
-                endpointMessage:data,
-
+                showResult: true,
+                endpointMessage: data,
             })
-        }catch(er){
+        })
+        .catch((err) => {
             setState({
                 ...state,
-                error:er.error
+                error: err.error
             })
-        }
+        })
     }
 
     if(isLoading) {
@@ -148,13 +143,12 @@ export default function Home({at}) {
 
 export async function getServerSideProps(context) {
     // Fetch data from external API
-    const accessT = await auth0.getSession(context.req, context.res)
-    let at = null
-    if(accessT!=null)  {
-        at = accessT.accessToken
+    let accessToken = auth0.getSession(context.req, context.res) || null
+    if (accessToken != null)  {
+        accessToken = accessToken.accessToken
     }
 
     // Pass data to the page via props
-    return { props: {at} }
-  }
+    return { props: {accessToken} }
+}
 
