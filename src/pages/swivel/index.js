@@ -1,4 +1,4 @@
-// import Link from 'next/link'
+ import Link from 'next/link'
 import React from 'react'
 import styles from '../../styles/Listing.module.css'
 
@@ -20,11 +20,13 @@ const userListing = ({swivel}) => {
         <div>
             <h1>Users</h1>
             {swivel.map(swiv => (
-                <div key={swiv.id}>
-                    <h3 className={styles.single}>                                                              
-                        {swiv.name}, {swiv.username}                           
-                    </h3>                    
-                </div>
+                <Link href={`/swivel/${  swiv.id}`} key={swiv.id}>
+                    <div className={styles.single}>
+                        <h3>{swiv.name}</h3>                                                              
+                         <p>{swiv.username}</p>
+                         <p>{swiv.phone }</p>                        
+                    </div>                    
+                </Link>
             ))}
         </div>
      )
