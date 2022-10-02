@@ -3,3 +3,4 @@ src/.next/
 .next/
 package-lock.json
 .DS_Store
+yarn.lock

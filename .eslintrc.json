@@ -68,6 +68,7 @@
         "consistent-return": "off",
         "func-names": "off",
         "no-param-reassign": "off",
-        "prefer-destructuring": "off"
+        "prefer-destructuring": "off",
+        "import/no-extraneous-dependencies": "off"
     }
 }
