@@ -10,7 +10,7 @@ const updateOptions = (token, options) => {
 
     update.headers = {
         ...update.headers,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
     }
 
     return update

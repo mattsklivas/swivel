@@ -20,15 +20,13 @@ export default function Home({accessToken}) {
             method: 'GET'
         })
         .then( (res) => {
-            const data = res.json()
             setState({
                 ...state,
                 showResult: true,
-                endpointMessage: data,
+                endpointMessage: res.message,
             })
         })
         .catch((err) => {
-            console.log(err)
             setState({
                 ...state,
                 error: err.error
@@ -142,9 +140,9 @@ export default function Home({accessToken}) {
     )
 }
 
-export async function getServerSideProps(context) {
+export const getServerSideProps = async (context) => {
     // Fetch data from external API
-    let accessToken = auth0.getSession(context.req, context.res) || null
+    let accessToken = await auth0.getSession(context.req, context.res) || null
     if (accessToken != null)  {
         accessToken = accessToken.idToken
     }
