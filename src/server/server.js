@@ -56,6 +56,10 @@ app.prepare().then(() => {
     const userRoutes = require('./routes/user')
     server.use('/api/user', jwtCheck, userRoutes(server))
 
+    // Include 'listing' routes
+    const listingRoutes = require('./routes/listing')
+    server.use('/api/listing', jwtCheck, userRoutes(server))
+
     // include 'sample' routes, only a demo for using jwttoken authorization
     const sampleRoute = require('./routes/sample')
     server.use('/api/sample', jwtCheck, sampleRoute(server)) // pass the jwtCheck to authorize token
