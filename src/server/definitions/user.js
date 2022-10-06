@@ -15,11 +15,27 @@ const UserSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    password: {
+    fname: {
         type: String,
+        trim: true
+    },
+    lname: {
+        type: String,
+        trim: true
+    },
+    location: {
+        type: String,
+        unique: false,
         required: true,
         trim: true
-    }
+    },
+    description: {
+        type: String
+    },
+    avatar_ref: {
+        type: String
+    },
+    saved_listings: [String]
 }, {
     collection: 'user'
 })
