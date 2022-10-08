@@ -67,6 +67,9 @@ app.prepare().then(() => {
     // Obtain any route and handle the request
     server.get('*', (req, res) => handle(req, res))
 
+    server.use((err, req, res, _next) => {
+        res.status(err.status).json(err)
+    })
     // Listen on the provided port
     server.listen(PORT, err => {
         if (err) {
