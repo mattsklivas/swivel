@@ -9,6 +9,10 @@ require('../styles/variables.less')
 require('../styles/main.less')
 
 function App({ Component, pageProps }) {
+  if (typeof window !== 'undefined') {
+    document.body.style = 'background: #ededed'
+  }
+
   return (
     <UserProvider>
         <Component {...pageProps} />

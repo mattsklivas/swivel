@@ -1,24 +1,31 @@
 // Import React
-import React from 'react'
+import { React, useState } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { useRouter } from 'next/router'
+import { Space, Button, Tabs } from 'antd'
+import { EyeInvisibleOutlined, TeamOutlined, StarOutlined } from '@ant-design/icons'
 import auth0 from '../auth0'
 import LoadingComponent from '../../components/LoadingComponent'
 import HeaderComponent from '../../components/HeaderComponent'
+import EditProfileModal from '../../components/EditProfileModal'
 import '../../hooks/useUser'
 
-export default function Home({accessToken}) {
+export default function Profile({accessToken}) {
     const router = useRouter()
     const { profileID } = router.query
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
     
+    // TODO: Get user details from backend
     // const [userDetails, userDetailsLoading] = useUser(profileID)
+
     const userDetails = {
-        email: 'testing@gmail.com',
-        username: 'username',
-        fname: 'fname',
-        lname: 'lname',
-        location: 'location',
-        description: 'description',
+        email: 'hello@gmail.com',
+        username: 'mattsklivas',
+        fname: 'Mike',
+        lname: 'Smith',
+        location: 'Montreal, QC',
+        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         avatar: null,
         saved_listings: [1, 2, 3]
     }
@@ -29,10 +36,51 @@ export default function Home({accessToken}) {
     if (user && !isLoading) {
         return (
             <>
-                <HeaderComponent />
-                <LoadingComponent
-                    message="Loading..."
-                />
+                <HeaderComponent user={user}/>
+                <div style={{backgroundColor: 'white', width: '95%', height: '89vh', borderRadius: '15px', padding: '5vh', marginLeft: 'auto', marginRight: 'auto'}}>
+                    <Space size={25} align="start">
+                        <div style={{height: 200, width: 200, borderRadius: 5, border: '2px solid grey', padding: 5, backgroundColor: '#FFFFFF', marginTop: '10px'}}>
+                            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '37%'}}>
+                                <EyeInvisibleOutlined style={{fontSize: 20}}/>
+                            </div>
+                            <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Avatar Not Found</span>
+                        </div>
+                        <Space direction="horizontal" align="start">
+                            <Space direction="vertical" align="start">
+                                <span style={{fontSize: '25px', fontWeight: 600}}>{`${userDetails.username}'s Profile`}</span>
+                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Name: </span><span style={{fontWeight: 400}}>{userDetails.fname && userDetails.lname ? `${userDetails.fname} ${userDetails.lname}` : 'Not Available'}</span></span>
+                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Email: </span><span style={{fontWeight: 400}}>{`${userDetails.email || 'Not available' }`}</span></span>
+                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Location: </span><span style={{fontWeight: 400}}>{`${userDetails.location || 'Not available' }`}</span></span>
+                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Bio: </span><span style={{fontWeight: 400}}>{`${userDetails.description || 'Not available' }`}</span></span>  
+                            </Space>
+                            { userDetails.username === user.nickname &&
+                                <Space direction="vertical" align="start">
+                                    <Button type="primary" onClick={() => setIsModalOpen(true)}>Edit Profile</Button>
+                                </Space>
+                            }
+                        </Space>
+                    </Space>
+                    <Tabs
+                        centered
+                        style={{paddingTop: '20px'}}
+                        defaultActiveKey="1"
+                        items={[TeamOutlined, StarOutlined].map((Icon, i) => {
+                            const id = String(i + 1)
+                            const title = i ? 'Saved Listings' : "User's Listings"
+
+                            return {
+                                label: (
+                                    <span>
+                                        <Icon />
+                                        {title}
+                                    </span>
+                                ),
+                                key: id,
+                                children: 'Listing drawers go here',
+                            }
+                        })} />
+                    { isModalOpen && <EditProfileModal hideModal={() => {setIsModalOpen(false)}} userDetails={userDetails} />}
+                </div>
             </>
         )
     } else if (isLoading) {
