@@ -8,6 +8,7 @@ import LoadingComponent from '../components/LoadingComponent'
 import HeaderComponent from '../components/HeaderComponent'
 import ListComponent from '../components/ListComponent'
 import useListingsAll from '../hooks/useListingsAll'
+import useListingsUser from '../hooks/useListingsUser'
 
 // Global categories object
 const CATEGORIES = {
@@ -26,10 +27,14 @@ export default function Home({accessToken}) {
     const token = accessToken
 
     // Get all listings
-    const { listings, listingsLoading, listingsError } = useListingsAll(token)
+    let { listings, listingsLoading, listingsError } = useListingsAll(token)
 
-    const userListings = [
+    // Get the logged-in user's listings
+    let { listingsUser, listingsUserLoading, listingsUserError } = useListingsUser(user ? user.nickname : '', token)
+
+    listings = [
         {
+            id: '123',
             creator: 'mattsklivas',
             category: 'trades',
             title: 'This is a listing title',
@@ -39,6 +44,7 @@ export default function Home({accessToken}) {
             offers: ['1', '2', '3']
         },
         {
+            id: '123',
             creator: 'mattsklivas',
             category: 'trades',
             title: 'This is a listing title',
@@ -48,6 +54,7 @@ export default function Home({accessToken}) {
             offers: ['1', '2', '3']
         },
         {
+            id: '123',
             creator: 'mattsklivas',
             category: 'trades',
             description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
@@ -57,6 +64,50 @@ export default function Home({accessToken}) {
             offers: ['1', '2', '3']
         },
         {
+            id: '123',
+            creator: 'mattsklivas',
+            category: 'music',
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            title: 'This is a listing title',
+            date_created: '20/09/2022',
+            image: null,
+            offers: ['1', '2', '3']
+        }
+    ]
+
+    listingsUser = [
+        {
+            id: '123',
+            creator: 'mattsklivas',
+            category: 'trades',
+            title: 'This is a listing title',
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            date_created: '20/09/2022',
+            image: null,
+            offers: ['1', '2', '3']
+        },
+        {
+            id: '123',
+            creator: 'mattsklivas',
+            category: 'trades',
+            title: 'This is a listing title',
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            date_created: '20/09/2022',
+            image: null,
+            offers: ['1', '2', '3']
+        },
+        {
+            id: '123',
+            creator: 'mattsklivas',
+            category: 'trades',
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            title: 'This is a listing title',
+            date_created: '20/09/2022',
+            image: null,
+            offers: ['1', '2', '3']
+        },
+        {
+            id: '123',
             creator: 'mattsklivas',
             category: 'music',
             description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
@@ -86,8 +137,7 @@ export default function Home({accessToken}) {
                                 ),
                                 key: id,
                                 children: (
-                                    // TODO: Replace this with listings if not testing with dummy data
-                                    <ListComponent listings={userListings} category={categoryKey} />
+                                    <ListComponent listings={listings} category={categoryKey} user={user} userListings={listingsUser} canOffer/>
                                 ),
                             }
                         })} />

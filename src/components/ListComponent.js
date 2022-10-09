@@ -11,6 +11,8 @@ import '../hooks/useUserDetails'
 export default function ListComponent(props) {
     let listings = props.listings
     const category = props.category
+    const user = props.user
+    const canOffer = props.canOffer
 
     if (category !== 'all') {
         listings = props.listings.filter(listing => listing.category === category)
@@ -22,12 +24,12 @@ export default function ListComponent(props) {
                 {category !== 'all' ? 
                     listings.map((listing, i) => {
                         return (
-                            <ListingComponent key={i} listing={listing} showCategory={false}/>
+                            <ListingComponent key={i} listing={listing} showCategory={false} user={user} canOffer={canOffer}/>
                         )
                     })
                     :
                     listings.map((listing, i) => {
-                        return (<ListingComponent key={i} listing={listing} showCategory={true}/>)
+                        return (<ListingComponent key={i} listing={listing} showCategory={true} user={user} canOffer={canOffer}/>)
                     })
                 }
             </div>

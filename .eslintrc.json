@@ -72,6 +72,7 @@
         "import/no-extraneous-dependencies": "off",
         "no-else-return": "off",
         "default-case": "off",
-        "react/destructuring-assignment": "off"
+        "react/destructuring-assignment": "off",
+        "prefer-const": "off"
     }
 }

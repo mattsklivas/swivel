@@ -21,6 +21,13 @@ export default function ListingComponent(props) {
     const router = useRouter()
     const listing = props.listing
     const showCategory = props.showCategory
+    const user = props.user
+    let canOffer = props.canOffer
+    
+    // Prevent ability to make an offer on user's own posts
+    if (listing.creator === user.nickname) {
+        canOffer = false
+    }
 
     return (
         <div style={{backgroundColor: 'white', borderRadius: '15px', border: '1px solid #DEDEDE', padding: '5vh', marginLeft: 'auto', marginRight: 'auto', marginBottom: 10}}>
@@ -33,7 +40,7 @@ export default function ListingComponent(props) {
                 </div>
                 <Space direction="horizontal" align="start">
                     <Space direction="vertical" align="start">
-                        <span style={{fontSize: '17px', fontWeight: 600}}>{listing.title}</span>
+                        <span style={{fontSize: '17px', fontWeight: 600, cursor: 'pointer'}} onClick={() => router.push(`/listing/${listing.id}`)}>{listing.title}</span>
                         <div style={{fontSize: '14px'}}>
                             <Space direction="horizontal" align="start">
                                 <FileTextOutlined style={{fontSize: 20}}/>
@@ -57,7 +64,7 @@ export default function ListingComponent(props) {
                         <Space direction="horizontal" size={0} style={{paddingTop: 5}}>
                             <Button style={{margin: '0 5px 0 0'}} onClick={() => {router.push(`/listing/${listing.id}`)}}>View Listing</Button>
                             {/* TODO: Make this into a select dropdown, show user's listings */}
-                            <Button style={{margin: '0 0 0 5px'}} type="primary">Make Offer</Button>
+                            {canOffer && <Button style={{margin: '0 0 0 5px'}} type="primary">Make Offer</Button>}
                         </Space>
                     </Space>
                 </Space>

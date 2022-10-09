@@ -1,38 +1,94 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable object-shorthand */
 /* eslint-disable quotes */
+// Import React
 import { React, useState } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { useRouter } from 'next/router'
-import { Space, Button, Tabs } from 'antd'
-import { EyeInvisibleOutlined, TeamOutlined, StarOutlined } from '@ant-design/icons'
+import { Space, Button, Tabs, Popconfirm } from 'antd'
+import { EyeInvisibleOutlined, TeamOutlined, UserOutlined, CalendarOutlined, AppstoreOutlined, FileTextOutlined } from '@ant-design/icons'
 import auth0 from '../auth0'
 import LoadingComponent from '../../components/LoadingComponent'
 import HeaderComponent from '../../components/HeaderComponent'
-import EditProfileModal from '../../components/EditProfileModal'
+// import OfferModal from '../../components/OfferModal'
 import ListComponent from '../../components/ListComponent'
-import useUserDetails from '../../hooks/useUserDetails'
+import useListing from '../../hooks/useListing'
 import useListingsUser from '../../hooks/useListingsUser'
+import fetcher from '../../helpers/fetcher'
 
-export default function Profile({accessToken}) {
+// Global categories object
+const CATEGORIES = {
+    trades : "Trades & Construction",
+    coding : "Programming & Tech",
+    music : "Music & Audio",
+    art : "Art & Fashion",
+    marketing : "Marketing",
+    other : "Other"
+}
+
+export default function Listing({accessToken}) {
     const router = useRouter()
-
-    // Get the username from the profile page
-    const queryKey = 'user'
-    const profileID = router.query[queryKey] || router.asPath.match(new RegExp(`[&?]${queryKey}=(.*)(&|$)`))
 
     const {user, error, isLoading} = useUser()
     const token = accessToken
 
+    // Get the listing id from the listing page
+    const queryKey = 'listing'
+    const listingID = router.query[queryKey] || router.asPath.match(new RegExp(`[&?]${queryKey}=(.*)(&|$)`))
+
     const [isModalOpen, setIsModalOpen] = useState(false)
     
-    // Get the user's details
-    let { userDetails, userDetailsLoading, UserDetailsError } = useUserDetails(profileID, token)
+    // Get the listing details
+    let { listing, listingLoading, listingError } = useListing(listingID, token)
 
     // Get the logged-in user's listings
     let { listingsUser, listingsUserLoading, listingsUserError } = useListingsUser(user ? user.nickname : '', token)
 
-    let listings = [
+    // Delete confirmation popup state variables
+    const [open, setOpen] = useState(false)
+    const [confirmLoading, setConfirmLoading] = useState(false)
+
+    // Show delete confirmation
+    const showDeleteConfirm = () => {
+        setOpen(true)
+    }
+
+    // Handle delete confirmation
+    const handleOk = async () => {
+        setConfirmLoading(true)
+        
+        await fetcher('api/listing', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: listing.id
+            }),
+        })
+        .then( () => {
+            setOpen(false)
+            setConfirmLoading(false)
+        })
+        .then( () => {
+            // Redirect to homepage following deletion
+            router.push('/')
+        })
+        .catch(() => { 
+            setOpen(false)
+            setConfirmLoading(false)
+        })
+    }
+
+    // Handle delete cancellation
+    const handleCancel = () => {
+        setOpen(false)
+    }
+
+    let offers = [
         {
-            creator: 'mattsklivas',
+            creator: 'username',
             category: 'trades',
             title: 'This is a listing title',
             description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
@@ -41,7 +97,7 @@ export default function Profile({accessToken}) {
             offers: ['1', '2', '3']
         },
         {
-            creator: 'mattsklivas',
+            creator: 'username',
             category: 'trades',
             title: 'This is a listing title',
             description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
@@ -50,7 +106,7 @@ export default function Profile({accessToken}) {
             offers: ['1', '2', '3']
         },
         {
-            creator: 'mattsklivas',
+            creator: 'username',
             category: 'trades',
             description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
             title: 'This is a listing title',
@@ -60,7 +116,7 @@ export default function Profile({accessToken}) {
         }
     ]
 
-    let saved = [
+    let myOffers = [
         {
             creator: 'mattsklivas',
             category: 'music',
@@ -90,15 +146,15 @@ export default function Profile({accessToken}) {
         }
     ]
 
-    userDetails = {
-        username: 'mattsklivas',
+    listing = {
+        creator: 'mattsklivas',
         category: 'trades',
         title: 'This is a listing title',
         description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         date_created: '20/09/2022',
         image: null,
-        listings: listings,
-        saved: saved,
+        offers: offers,
+        myOffers: myOffers
     }
 
     listingsUser = [
@@ -154,28 +210,51 @@ export default function Profile({accessToken}) {
                             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '37%'}}>
                                 <EyeInvisibleOutlined style={{fontSize: 20}}/>
                             </div>
-                            <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Avatar Not Found</span>
+                            <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
                         </div>
                         <Space direction="horizontal" align="start">
                             <Space direction="vertical" align="start">
-                                <span style={{fontSize: '25px', fontWeight: 600}}>{`${userDetails.username}'s Profile`}</span>
-                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Name: </span><span style={{fontWeight: 400}}>{userDetails.fname && userDetails.lname ? `${userDetails.fname} ${userDetails.lname}` : 'Not Available'}</span></span>
-                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Email: </span><span style={{fontWeight: 400}}>{`${userDetails.email || 'Not available' }`}</span></span>
-                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Location: </span><span style={{fontWeight: 400}}>{`${userDetails.location || 'Not available' }`}</span></span>
-                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Bio: </span><span style={{fontWeight: 400}}>{`${userDetails.description || 'Not available' }`}</span></span>  
+                                <span style={{fontSize: '25px', fontWeight: 600}}>{listing.title}</span>
+                                <div style={{fontSize: '14px'}}>
+                            <Space direction="horizontal" align="start">
+                                <FileTextOutlined style={{fontSize: 20}}/>
+                                <span>{listing.description.length > 340 ? `${listing.description.substring(0, 340)}...` : listing.description}</span>
+                            </Space>
+                            </div>
+                            <div style={{fontSize: '14px', cursor: 'pointer'}} onClick={() => {router.push(`/profile/${listing.creator}`)}}>
+                                <UserOutlined style={{fontSize: 20}}/>
+                                <span style={{paddingLeft: 5}}>{`${listing.creator}`}</span>
+                            </div>
+                            <div style={{fontSize: '14px'}}>
+                                <CalendarOutlined style={{fontSize: 20}}/>
+                                <span style={{paddingLeft: 5}}>{`${listing.date_created}`}</span>
+                            </div>
+                            <div style={{fontSize: '14px'}}>
+                                <AppstoreOutlined style={{fontSize: 20}}/>
+                                <span style={{paddingLeft: 5}}>{CATEGORIES[listing.category]}</span>
+                            </div>
                             </Space>
                         </Space>
                     </Space>
-                    { userDetails.username === user.nickname &&
-                        <Button style={{position: 'absolute', right: '80px', top: '100px'}} type="primary" onClick={() => setIsModalOpen(true)}>Edit Profile</Button>
+                    { listing.creator === user.nickname &&
+                        <Popconfirm
+                            style={{float: 'right', marginTop: '-40px'}}
+                            title="Are you sure you wish to delete this listing?"
+                            open={open}
+                            onConfirm={handleOk}
+                            okButtonProps={{ loading: confirmLoading }}
+                            onCancel={handleCancel}
+                        >
+                            <Button danger type="primary" style={{float: 'right', marginTop: '-40px'}} onClick={showDeleteConfirm}>Delete Listing</Button>
+                        </Popconfirm>
                     }
                     <Tabs
                         centered
                         style={{padding: '20px 0 0 0'}}
                         defaultActiveKey="1"
-                        items={[TeamOutlined, StarOutlined].map((Icon, i) => {
+                        items={[TeamOutlined, UserOutlined].map((Icon, i) => {
                             const id = String(i + 1)
-                            const title = i ? 'Saved Listings' : "User's Listings"
+                            const title = !i ? 'All Offers' : 'My Offers'
 
                             return {
                                 label: (
@@ -186,11 +265,11 @@ export default function Profile({accessToken}) {
                                 ),
                                 key: id,
                                 children: (
-                                    <ListComponent listings={i ? userDetails.saved : userDetails.listings} category="all" user={user} userListings={listingsUser} canOffer={false} />
+                                    <ListComponent listings={!i ? listing.offers : listing.myOffers} category="all" user={user} userListings={listingsUser} canOffer/>
                                 ),
                             }
                         })} />
-                    { isModalOpen && <EditProfileModal hideModal={() => {setIsModalOpen(false)}} userDetails={userDetails} />}
+                    {/* { isModalOpen && <OfferModal hideModal={() => {setIsModalOpen(false)}} listing={listing} userListings={listingsUser} />} */}
                 </div>
                 <div style={{height: 30}}/>
             </>
