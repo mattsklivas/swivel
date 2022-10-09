@@ -13,6 +13,10 @@ const ListingSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    category: {
+        type: String,
+        trim: true
+    },
     date_created: {
         type: Date,
         default: Date.now

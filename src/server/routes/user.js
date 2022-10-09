@@ -9,6 +9,25 @@ const bcrypt = require('bcrypt')
 // Import the User data model
 const UserModel = require('../definitions/user')
 
+// Create a user for testing
+router.post('/create', async (req,res)=>{
+    // pass the information to an object 
+
+	const user = new UserModel({
+            email: req.body.email,
+			username: req.body.username,
+			location: req.body.location 
+	})
+	
+	// save the listing to dbg
+	try{
+		const saveUser = await user.save()
+		res.status(200).json(saveUser)
+	}catch(err){
+		res.status(500).json({message: err.message})
+	}
+})
+
 function routes(app) {
     // Get all users
     router.get('/', async (req, res) => {
@@ -24,6 +43,8 @@ function routes(app) {
     })
 
     // User login
+    // Check if user is logged in
+    // return ....
     router.post('/login', async (req, res) => {
         try {
             // Fetch the user details in the database
