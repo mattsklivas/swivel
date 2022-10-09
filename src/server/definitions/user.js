@@ -32,8 +32,9 @@ const UserSchema = new mongoose.Schema({
     description: {
         type: String
     },
-    avatar_ref: {
-        type: String
+    avatar: {
+        data: Buffer,
+        contentType: String
     },
     saved_listings: [String]
 }, {

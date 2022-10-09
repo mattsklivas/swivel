@@ -22,7 +22,10 @@ const ListingSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    image_refs: [String],
+    image: {
+        data: Buffer,
+        contentType: String
+    },
     offers: [String]
 }, {
     collection: 'listing'

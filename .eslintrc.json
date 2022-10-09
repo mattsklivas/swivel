@@ -69,6 +69,9 @@
         "func-names": "off",
         "no-param-reassign": "off",
         "prefer-destructuring": "off",
-        "import/no-extraneous-dependencies": "off"
+        "import/no-extraneous-dependencies": "off",
+        "no-else-return": "off",
+        "default-case": "off",
+        "react/destructuring-assignment": "off"
     }
 }
