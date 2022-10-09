@@ -55,8 +55,8 @@ function CreateModal(props) {
                     },
                     { 
                         min: 5,
-                        max: 60, 
-                        message: 'Title must be have minimum of 5 characters and maximum 60 characters' 
+                        max: 340, 
+                        message: 'Title must be have minimum of 5 characters and maximum 340 characters' 
                     }
                 ]}>
                     <Input />

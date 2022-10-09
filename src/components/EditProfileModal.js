@@ -41,7 +41,7 @@ function CreateModal(props) {
     }
 
     return (
-        <Modal className="dit-profile-modal" title="Edit Profile" open={visible} onOk={form.submit} onCancel={handleCancel}>
+        <Modal className="edit-profile-modal" title="Edit Profile" open={visible} onOk={form.submit} onCancel={handleCancel}>
             {parent.userDetails ?
                 <Form
                     form={form}
