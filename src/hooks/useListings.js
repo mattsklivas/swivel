@@ -7,9 +7,8 @@ function useListings(token) {
         data: listingsResponse, 
         error: listingsError
     } = useSWR([
-        '/api/listing/all', token
-    ], {
-        fetcher: hookFetcher,
+        '/api/user/details/', token], hookFetcher
+    , {
         shouldRetryOnError: false,
         revalidateIfStale: false,
         revalidateOnFocus: false,

@@ -2,14 +2,13 @@ import useSWR from 'swr'
 import hookFetcher from '../helpers/hookFetcher'
 
 // Fetch a user's details
-function useUser(profileID, token) {
+function useUser(username, token) {
     const { 
         data: userResponse, 
         error: userDetailsError
     } = useSWR([
-        `/api/user/${profileID}`, token
-    ], {
-        fetcher: hookFetcher,
+        `/api/user/details/${username}`, token], hookFetcher
+    , {
         shouldRetryOnError: false,
         revalidateIfStale: false,
         revalidateOnFocus: false,

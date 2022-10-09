@@ -4,22 +4,28 @@ import { React, useState } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { useRouter } from 'next/router'
 import { Space, Button, Tabs } from 'antd'
+import useSWR from 'swr'
 import { EyeInvisibleOutlined, TeamOutlined, StarOutlined } from '@ant-design/icons'
 import auth0 from '../auth0'
 import LoadingComponent from '../../components/LoadingComponent'
 import HeaderComponent from '../../components/HeaderComponent'
 import EditProfileModal from '../../components/EditProfileModal'
 import ListComponent from '../../components/ListComponent'
-import '../../hooks/useUser'
+import useUserDetails from '../../hooks/useUserDetails'
 
 export default function Profile({accessToken}) {
     const router = useRouter()
-    const { profileID } = router.query
+
+    const queryKey = 'user'
+    const profileID = router.query[queryKey] || router.asPath.match(new RegExp(`[&?]${queryKey}=(.*)(&|$)`))
+
+    const {user, error, isLoading} = useUser()
+    const token = accessToken
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     
-    // TODO: Get user details from backend
-    // const [userDetails, userDetailsLoading] = useUser(profileID)
+    // Get the user's details
+    const { userDetailsTesting, userDetailsLoading, UserDetailsError } = useUserDetails(profileID, token)
 
     const userDetails = {
         email: 'hello@gmail.com',
@@ -101,9 +107,6 @@ export default function Profile({accessToken}) {
             offers: ['1', '2', '3']
         }
     ]
-
-    const {user, error, isLoading} = useUser()
-    const token = accessToken
 
     if (user && !isLoading) {
         return (

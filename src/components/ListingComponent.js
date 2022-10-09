@@ -5,7 +5,7 @@ import { React } from 'react'
 import { useRouter } from 'next/router'
 import { Space, Button } from 'antd'
 import { EyeInvisibleOutlined, UserOutlined, CalendarOutlined, AppstoreOutlined, FileTextOutlined } from '@ant-design/icons'
-import '../hooks/useUser'
+import '../hooks/useUserDetails'
 
 // Global categories object
 const CATEGORIES = {

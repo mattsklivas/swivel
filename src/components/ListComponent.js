@@ -6,7 +6,7 @@ import { Row } from 'antd'
 import { InboxOutlined } from '@ant-design/icons'
 // import LoadingComponent from './LoadingComponent'
 import ListingComponent from './ListingComponent'
-import '../hooks/useUser'
+import '../hooks/useUserDetails'
 
 export default function ListComponent(props) {
     let listings = props.listings
