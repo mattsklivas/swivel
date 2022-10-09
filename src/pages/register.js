@@ -14,15 +14,15 @@ function Register({accessToken}) {
     useEffect(() => {
         if (user) {
             // Function to handle registration
-            const handleRegister = async (credentials) => {
+            const handleRegister = async () => {
                 await fetcher('api/user/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        username: credentials.username,
-                        email: credentials.email,
+                        username: user.nickname,
+                        email: user.name,
                     }),
                 })
                 .then( () => {
