@@ -15,6 +15,7 @@ const ListingSchema = new mongoose.Schema({
     },
     category: {
         type: String,
+        required: true,
         trim: true
     },
     date_created: {
@@ -30,7 +31,7 @@ const ListingSchema = new mongoose.Schema({
         data: Buffer,
         contentType: String
     },
-    offers: [String]
+    offers: []
 }, {
     collection: 'listing'
 })

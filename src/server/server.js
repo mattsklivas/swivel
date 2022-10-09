@@ -9,6 +9,7 @@ const bodyParser = require('body-parser')
 // Import dotenv to get environment variables
 const path = require('path')
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+require('dotenv').config()
 
 // Environment variables
 const PORT = process.env.PORT || 3000
@@ -33,7 +34,8 @@ const jwtCheck = expressJwt({
 if (dev) {
     // Local connection
     mongoose
-    .connect(DB_URL)
+    //.connect(DB_URL)
+    .connect(process.env.MONGO_URI)
     .then(() => {
         console.log('Connected to local MongoDB instance')
     })
@@ -49,11 +51,8 @@ const app = next({ dir: './src', dev })
 const handle = app.getRequestHandler()
 const server = express()
 
+// this is used to convert to json in the console log
 server.use(bodyParser.json())
-
-const listingRoutes = require('./routes/listing')
-
-server.use('/api/listing', listingRoutes)
 
 // Create express server
 app.prepare().then(() => {
@@ -67,7 +66,7 @@ app.prepare().then(() => {
 
     // Include 'listing' routes
     const listingRoutes = require('./routes/listing')
-    server.use('/api/listing', jwtCheck, userRoutes(server))
+    server.use('/api/listing', listingRoutes(server))
 
     // include 'sample' routes, only a demo for using jwttoken authorization
     const sampleRoute = require('./routes/sample')
