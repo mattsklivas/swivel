@@ -35,7 +35,7 @@ export default function ListComponent(props) {
     } else {
         return (
             <Row type="flex" justify="center" align="middle">
-                <div style={{paddingTop: '5vh'}}>
+                <div style={{padding: '5vh 0'}}>
                     <InboxOutlined style={{fontSize: 30, width: '100%'}}/>
                     <div>No listings to show.</div>
                 </div>

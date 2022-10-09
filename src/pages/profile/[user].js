@@ -4,7 +4,6 @@ import { React, useState } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { useRouter } from 'next/router'
 import { Space, Button, Tabs } from 'antd'
-import useSWR from 'swr'
 import { EyeInvisibleOutlined, TeamOutlined, StarOutlined } from '@ant-design/icons'
 import auth0 from '../auth0'
 import LoadingComponent from '../../components/LoadingComponent'
@@ -16,6 +15,7 @@ import useUserDetails from '../../hooks/useUserDetails'
 export default function Profile({accessToken}) {
     const router = useRouter()
 
+    // Get the username from the profile page
     const queryKey = 'user'
     const profileID = router.query[queryKey] || router.asPath.match(new RegExp(`[&?]${queryKey}=(.*)(&|$)`))
 
