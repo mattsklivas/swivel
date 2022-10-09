@@ -15,7 +15,7 @@ const ListingSchema = new mongoose.Schema({
     },
     date_created: {
         type: Date,
-        required: true
+        default: Date.now
     },
     description: {
         type: String,
