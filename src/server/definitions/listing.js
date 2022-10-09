@@ -13,6 +13,11 @@ const ListingSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    category: {
+        type: String,
+        required: true,
+        trim: true
+    },
     date_created: {
         type: Date,
         required: true

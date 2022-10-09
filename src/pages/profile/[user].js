@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 // Import React
 import { React, useState } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
@@ -8,6 +9,7 @@ import auth0 from '../auth0'
 import LoadingComponent from '../../components/LoadingComponent'
 import HeaderComponent from '../../components/HeaderComponent'
 import EditProfileModal from '../../components/EditProfileModal'
+import ListComponent from '../../components/ListComponent'
 import '../../hooks/useUser'
 
 export default function Profile({accessToken}) {
@@ -27,8 +29,78 @@ export default function Profile({accessToken}) {
         location: 'Montreal, QC',
         description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         avatar: null,
-        saved_listings: [1, 2, 3]
+        user_listings: [
+            '1', 
+            '2', 
+            '3'
+        ],
+        saved_listings: [
+            '1', 
+            '2', 
+            '3'
+        ]
     }
+
+    // Keep offers as references, only get details if we click the listing page
+    const userListings = [
+        {
+            creator: 'mattsklivas',
+            category: 'trades',
+            title: 'This is a listing title',
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            date_created: '20/09/2022',
+            image: null,
+            offers: ['1', '2', '3']
+        },
+        {
+            creator: 'mattsklivas',
+            category: 'trades',
+            title: 'This is a listing title',
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            date_created: '20/09/2022',
+            image: null,
+            offers: ['1', '2', '3']
+        },
+        {
+            creator: 'mattsklivas',
+            category: 'trades',
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            title: 'This is a listing title',
+            date_created: '20/09/2022',
+            image: null,
+            offers: ['1', '2', '3']
+        }
+    ]
+
+    const savedListings = [
+        {
+            creator: 'mattsklivas',
+            category: 'music',
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            title: 'This is a listing title2',
+            date_created: '20/09/2022',
+            image: null,
+            offers: ['1', '2', '3']
+        },
+        {
+            creator: 'mattsklivas',
+            category: 'music',
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            title: 'This is a listing title2',
+            date_created: '20/09/2022',
+            image: null,
+            offers: ['1', '2', '3']
+        },
+        {
+            creator: 'mattsklivas',
+            category: 'music',
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            title: 'This is a listing title2',
+            date_created: '20/09/2022',
+            image: null,
+            offers: ['1', '2', '3']
+        }
+    ]
 
     const {user, error, isLoading} = useUser()
     const token = accessToken
@@ -37,7 +109,7 @@ export default function Profile({accessToken}) {
         return (
             <>
                 <HeaderComponent user={user}/>
-                <div style={{backgroundColor: 'white', width: '95%', height: '89vh', borderRadius: '15px', padding: '5vh', marginLeft: 'auto', marginRight: 'auto'}}>
+                <div style={{backgroundColor: 'white', width: '95%', height: 'auto', borderRadius: '15px', padding: '5vh 5vh 3vh 5vh', marginLeft: 'auto', marginRight: 'auto'}}>
                     <Space size={25} align="start">
                         <div style={{height: 200, width: 200, borderRadius: 5, border: '2px solid grey', padding: 5, backgroundColor: '#FFFFFF', marginTop: '10px'}}>
                             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '37%'}}>
@@ -53,16 +125,14 @@ export default function Profile({accessToken}) {
                                 <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Location: </span><span style={{fontWeight: 400}}>{`${userDetails.location || 'Not available' }`}</span></span>
                                 <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Bio: </span><span style={{fontWeight: 400}}>{`${userDetails.description || 'Not available' }`}</span></span>  
                             </Space>
-                            { userDetails.username === user.nickname &&
-                                <Space direction="vertical" align="start">
-                                    <Button type="primary" onClick={() => setIsModalOpen(true)}>Edit Profile</Button>
-                                </Space>
-                            }
                         </Space>
                     </Space>
+                    { userDetails.username === user.nickname &&
+                        <Button style={{position: 'absolute', right: '80px', top: '100px'}} type="primary" onClick={() => setIsModalOpen(true)}>Edit Profile</Button>
+                    }
                     <Tabs
                         centered
-                        style={{paddingTop: '20px'}}
+                        style={{padding: '20px 0 0 0'}}
                         defaultActiveKey="1"
                         items={[TeamOutlined, StarOutlined].map((Icon, i) => {
                             const id = String(i + 1)
@@ -76,11 +146,14 @@ export default function Profile({accessToken}) {
                                     </span>
                                 ),
                                 key: id,
-                                children: 'Listing drawers go here',
+                                children: (
+                                    <ListComponent listings={i ? savedListings : userListings} category="all" />
+                                ),
                             }
                         })} />
                     { isModalOpen && <EditProfileModal hideModal={() => {setIsModalOpen(false)}} userDetails={userDetails} />}
                 </div>
+                <div style={{height: 30}}/>
             </>
         )
     } else if (isLoading) {

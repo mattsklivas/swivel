@@ -72,7 +72,6 @@
         "import/no-extraneous-dependencies": "off",
         "no-else-return": "off",
         "default-case": "off",
-        "react/destructuring-assignment": "off",
-        "quotes": "off"
+        "react/destructuring-assignment": "off"
     }
 }

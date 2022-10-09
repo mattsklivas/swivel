@@ -70,7 +70,7 @@ function HeaderComponent(props) {
 
     return (
         <>
-            <Row style={{background: '#3ad8af', marginBottom: '20px'}}>
+            <Row style={{background: '#008F8C', marginBottom: '20px'}}>
                 <Col span={8}>
                     <div style={{ width: 200, paddingTop: 7, paddingLeft: 10 }}>
                         <span style={{display: 'inline-block', fontweight: 500, color: 'white'}}>User: </span>
