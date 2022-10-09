@@ -73,6 +73,7 @@
         "no-else-return": "off",
         "default-case": "off",
         "react/destructuring-assignment": "off",
-        "prefer-const": "off"
+        "prefer-const": "off",
+        "object-shorthand": "off"
     }
 }
