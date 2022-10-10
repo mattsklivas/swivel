@@ -4,6 +4,7 @@ const next = require('next')
 const {expressjwt: expressJwt} = require('express-jwt')
 const jwks = require('jwks-rsa')
 const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
 
 // Import dotenv to get environment variables
 const path = require('path')
@@ -51,10 +52,10 @@ const server = express()
 // Create express server
 app.prepare().then(() => {
     server.use(cors(API_URL))
-
+    server.use(bodyParser.json())
     // Include 'user' routes
     const userRoutes = require('./routes/user')
-    server.use('/api/user', jwtCheck, userRoutes(server))
+    server.use('/api/user', userRoutes(server))
 
     // Include 'listing' routes
     const listingRoutes = require('./routes/listing')
