@@ -1,5 +1,6 @@
 // Import React
 import React from 'react'
+import Layout from '../components/Layout'
 import { UserProvider } from '@auth0/nextjs-auth0'
 
 // Antd-specific imports
@@ -14,9 +15,11 @@ function App({ Component, pageProps }) {
 	}
 
 	return (
-		<UserProvider>
-			<Component {...pageProps} />
-		</UserProvider>
+		<Layout>
+			<UserProvider>
+				<Component {...pageProps} />
+			</UserProvider>
+		</Layout>
 	)
 }
 

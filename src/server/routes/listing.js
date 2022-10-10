@@ -8,7 +8,7 @@ const ListingModel = require('../definitions/listing')
 
 function routes(app) {
     // Return all object
-    router.get('/', async (req,res) => {
+    router.get('/all', async (req,res) => {
         const listing = await ListingModel.find()
         res.json(listing)
         try{
