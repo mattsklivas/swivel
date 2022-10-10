@@ -42,7 +42,7 @@ function Register({accessToken}) {
      // <LoadingComponent message="Registering User..." />
      <Link href={url}>
         <div>
-                <button type="button" onClick={handleRegister} style={{height: '50px', width : '100px'}}>
+                <button type="button" onClick={handleRegister} >
                     User registered click here to proceed
                 </button> 
         </div>
