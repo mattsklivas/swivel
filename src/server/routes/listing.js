@@ -80,38 +80,36 @@ function routes(app) {
         try{
             // Get the string of ids from the body and split by ',' into an array
             const offerArrayNew = req.body.id.split(',')
-
+            // Get current offerings
             const offerArray = await ListingModel.find({_id: req.params.listingID}).select('offers')
             
+            // Loop through each of the new offering
             for(let i = 0; i < offerArrayNew.length; i+=1){
+                // check if new offering exist in the current offering
                 if(!offerArray[0].offers.includes(offerArrayNew[i])){
                     offerArray[0].offers.push(offerArrayNew[i])
                 }
             }
 
+            // Update offer with new listings
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
                 {$set: {offers: offerArray[0].offers}})                             
-            res.json(updateListing)      
+            res.status(200).json(updateListing)      
         }catch(err){
             res.status(500).json({message: err})
         }
     })
 
-    // Remove offers to a listing
+    // Remove offers from a listing
     router.patch('/deleteOffer/:listingID', async(req,res)=>{
         try{
-            // Get all offer IDs from the user that is offering
-            const offerListIDs = await ListingModel.find({creator: req.body.creator}).select('_id')
-            const offerArray = [String]
-            for(let i=0; i < offerListIDs.length ; i+=1 ){
-                // eslint-disable-next-line no-underscore-dangle
-                offerArray[i] = offerListIDs[i]._id.toString()
-            }
+            // Get the string of ids from the body and split by ',' into an array
+            const removeOfferArray = req.body.id.split(',')
 
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
-                {$pullAll: {offers: offerArray}})
+                {$pullAll: {offers: removeOfferArray}})
             res.status(200).json(updateListing)
         }catch(err){
             res.status(500).json({message: err})
