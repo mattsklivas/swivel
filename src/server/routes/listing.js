@@ -69,31 +69,53 @@ function routes(app) {
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
                 {$set: {title: req.body.title, description: req.body.description}}) // need to include image!!!
-            res.json(updateListing)
+            res.status(200).json(updateListing)
         }catch(err){
-            res.json({message: err})
+            res.status(500).json({message: err})
         }
     })
 
     // Add offers to a listing
-    router.patch('/offer/:listingID', async(req,res)=>{
+    // router.patch('/offer/:listingID', async(req,res)=>{
+    //     try{
+    //         // Get all offer IDs from the user that is offering
+    //         const offerListIDs = await ListingModel.find({creator: req.body.creator}).select('_id')
+    //         const offerListIDsOld = await ListingModel.find({creator: req.body.creator}).select('offers')
+            
+    //         const offerArray = [String]
+    //         for(let i=0; i < offerListIDs.length ; i+=1){
+    //             // eslint-disable-next-line no-underscore-dangle
+    //             offerArray[i] = offerListIDs[i]._id.toString()
+    //         }
+
+    //         const updateListing = await ListingModel.updateOne(
+    //             {_id: req.params.listingID}, 
+    //             {$set: {offers: offerArray}})
+    //         res.status(200).json(updateListing)
+    //     }catch(err){
+    //         res.status(500).json({message: err})
+    //     }
+    // })
+    // Add offers to a listing
+    router.patch('/offer2/:listingID', async(req,res)=>{
         try{
             // Get all offer IDs from the user that is offering
-            const offerListIDs = await ListingModel.find({creator: req.body.creator}).select('_id')
-            const offerListIDsOld = await ListingModel.find({creator: req.body.creator}).select('offers')
+            const offerArrayNew = req.body.id.split(',')
+            const offerArray = await ListingModel.find({_id: req.params.listingID}).select('offers')[0].offers
+            console.log(offerArray)
             
-            const offerArray = [String]
-            for(let i=0; i < offerListIDs.length ; i+=1){
-                // eslint-disable-next-line no-underscore-dangle
-                offerArray[i] = offerListIDs[i]._id.toString()
+            for(let i = 0; i < offerArrayNew.length; i+=1){
+                if(!offerArray[0].offers.includes(offerArrayNew[i])){
+                    offerArray[0].offers.push(offerArrayNew[i])
+                }
             }
 
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
-                {$set: {offers: offerArray}})
-            res.json(updateListing)
+                {$set: {offers: offerArray[0].offers}})                             
+            res.json(updateListing)      
         }catch(err){
-            res.json({message: err})
+            res.status(500).json({message: err})
         }
     })
 
@@ -111,9 +133,9 @@ function routes(app) {
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
                 {$pullAll: {offers: offerArray}})
-            res.json(updateListing)
+            res.status(200).json(updateListing)
         }catch(err){
-            res.json({message: err})
+            res.status(500).json({message: err})
         }
     })
 
@@ -121,9 +143,9 @@ function routes(app) {
     router.delete('/:listingID', async(req,res) =>{
         try{
             const removeListing =	await ListingModel.remove({_id: req.params.listingID})
-            res.json(removeListing)
+            res.status(200).json(removeListing)
         }catch(err){
-            res.json({message: err})
+            res.status(500).json({message: err})
         }
     })
 
