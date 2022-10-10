@@ -21,7 +21,7 @@ function routes(app) {
     })
 
     // Return one listing
-    router.get('/:listingID', async (req, res) => {
+    router.get('/findByID/:listingID', async (req, res) => {
         try {
             // Fetch one listing in the database
             const retrievedListing = await ListingModel.findOne({ username: req.params.listingID })      
@@ -33,7 +33,7 @@ function routes(app) {
     })
 
     // Return all the listings from the user
-    router.get('/user/:creator', async (req, res) => {
+    router.get('/userListing/:creator', async (req, res) => {
         try {
             // Fetch one listing in the database
             const retrievedListing = await ListingModel.find({ creator: req.params.creator })      
@@ -62,8 +62,8 @@ function routes(app) {
         }
     })
 
-    // Update a post
-    router.patch('/:listingID', async(req,res) =>{
+    // Update a listing
+    router.patch('/update/:listingID', async(req,res) =>{
         try{
             // update one
             const updateListing = await ListingModel.updateOne(
@@ -76,33 +76,12 @@ function routes(app) {
     })
 
     // Add offers to a listing
-    // router.patch('/offer/:listingID', async(req,res)=>{
-    //     try{
-    //         // Get all offer IDs from the user that is offering
-    //         const offerListIDs = await ListingModel.find({creator: req.body.creator}).select('_id')
-    //         const offerListIDsOld = await ListingModel.find({creator: req.body.creator}).select('offers')
-            
-    //         const offerArray = [String]
-    //         for(let i=0; i < offerListIDs.length ; i+=1){
-    //             // eslint-disable-next-line no-underscore-dangle
-    //             offerArray[i] = offerListIDs[i]._id.toString()
-    //         }
-
-    //         const updateListing = await ListingModel.updateOne(
-    //             {_id: req.params.listingID}, 
-    //             {$set: {offers: offerArray}})
-    //         res.status(200).json(updateListing)
-    //     }catch(err){
-    //         res.status(500).json({message: err})
-    //     }
-    // })
-    // Add offers to a listing
-    router.patch('/offer2/:listingID', async(req,res)=>{
+    router.patch('/addOffer/:listingID', async(req,res)=>{
         try{
-            // Get all offer IDs from the user that is offering
+            // Get the string of ids from the body and split by ',' into an array
             const offerArrayNew = req.body.id.split(',')
-            const offerArray = await ListingModel.find({_id: req.params.listingID}).select('offers')[0].offers
-            console.log(offerArray)
+
+            const offerArray = await ListingModel.find({_id: req.params.listingID}).select('offers')
             
             for(let i = 0; i < offerArrayNew.length; i+=1){
                 if(!offerArray[0].offers.includes(offerArrayNew[i])){
@@ -120,7 +99,7 @@ function routes(app) {
     })
 
     // Remove offers to a listing
-    router.patch('/offer/remove/:listingID', async(req,res)=>{
+    router.patch('/deleteOffer/:listingID', async(req,res)=>{
         try{
             // Get all offer IDs from the user that is offering
             const offerListIDs = await ListingModel.find({creator: req.body.creator}).select('_id')
@@ -140,7 +119,7 @@ function routes(app) {
     })
 
     // Delete one listing
-    router.delete('/:listingID', async(req,res) =>{
+    router.delete('/delete/:listingID', async(req,res) =>{
         try{
             const removeListing =	await ListingModel.remove({_id: req.params.listingID})
             res.status(200).json(removeListing)
