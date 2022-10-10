@@ -1,0 +1,19 @@
+name: swivel CI testing
+
+on:
+  push:
+    branches: [ tarun ]
+
+
+jobs:
+  test_push_request:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: yarn install
+      - run: yarn build
+      - run: yarn dev
+      - run: yarn dev-server
