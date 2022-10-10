@@ -30,11 +30,10 @@ export default function Home({accessToken}) {
     let { listings, listingsLoading, listingsError } = useListingsAll(token)
 
     // Get the logged-in user's listings
-    let { listingsUser, listingsUserLoading, listingsUserError } = useListingsUser(user ? user.nickname : '', token)
-     
+    let { listingsUser, listingsUserLoading, listingsUserError } = useListingsUser(user ? user.nickname : '', token)     
     console.log(listingsUser)
     useEffect(() => {
-        console.log(listings,listingsLoading, listingsError )
+        console.log(listings, listingsLoading, listingsError )
     })
     // listings = [
     //     {
@@ -127,7 +126,7 @@ export default function Home({accessToken}) {
             <>
                 <HeaderComponent user={user}/>
                 <div style={{backgroundColor: 'white', width: '95%', height: 'auto', borderRadius: '15px', padding: '3vh 5vh 3vh 5vh', marginLeft: 'auto', marginRight: 'auto'}}>
-                    {/* <Tabs
+                    <Tabs
                         centered
                         defaultActiveKey="1"
                         items={Object.keys(CATEGORIES).map((categoryKey, i) => {
@@ -144,7 +143,7 @@ export default function Home({accessToken}) {
                                     <ListComponent listings={listings} category={categoryKey} user={user} userListings={listingsUser} canOffer/>
                                 ),
                             }
-                        })} /> */}
+                        })} />
                 </div>
                 <div style={{height: 30}}/>
             </>

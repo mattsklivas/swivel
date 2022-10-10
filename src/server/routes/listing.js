@@ -65,7 +65,7 @@ function routes(app) {
     // Update a post
     router.patch('/:listingID', async(req,res) =>{
         try{
-            //update one
+            // update one
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
                 {$set: {title: req.body.title, description: req.body.description}}) // need to include image!!!
@@ -83,15 +83,15 @@ function routes(app) {
             const offerListIDsOld = await ListingModel.find({creator: req.body.creator}).select('offers')
             
             const offerArray = [String]
-            for(var i=0; i < offerListIDs.length ; ++i){
+            for(let i=0; i < offerListIDs.length ; i+=1){
+                // eslint-disable-next-line no-underscore-dangle
                 offerArray[i] = offerListIDs[i]._id.toString()
             }
 
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
                 {$set: {offers: offerArray}})
-            res.json(updateListing)       
-          
+            res.json(updateListing)
         }catch(err){
             res.json({message: err})
         }
@@ -103,20 +103,19 @@ function routes(app) {
             // Get all offer IDs from the user that is offering
             const offerListIDs = await ListingModel.find({creator: req.body.creator}).select('_id')
             const offerArray = [String]
-            for(var i=0; i < offerListIDs.length ; ++i){
+            for(let i=0; i < offerListIDs.length ; i+=1 ){
+                // eslint-disable-next-line no-underscore-dangle
                 offerArray[i] = offerListIDs[i]._id.toString()
             }
 
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
                 {$pullAll: {offers: offerArray}})
-            res.json(updateListing)       
-            
+            res.json(updateListing)
         }catch(err){
             res.json({message: err})
         }
     })
-
 
     // Delete one listing
     router.delete('/:listingID', async(req,res) =>{
