@@ -18,6 +18,8 @@ function Register({accessToken}) {
     const useremail = emailName[0].split(':')[1].replace('"','')
     const statevalue = two[1].split(':')[1].replace('"','').substring(0,)
     const state = statevalue.replace('"}','')
+
+    //  redirected to this url after registration process
     const url = `https://dev-gl5357kx.us.auth0.com/continue?state=${state}`
     // Function to handle registration
     const handleRegister = async () => {
@@ -40,7 +42,7 @@ function Register({accessToken}) {
      // <LoadingComponent message="Registering User..." />
      <Link href={url}>
         <div>
-                <button type="button" onClick={handleRegister}>
+                <button type="button" onClick={handleRegister} style={{height: '50px', width : '100px'}}>
                     User registered click here to proceed
                 </button> 
         </div>

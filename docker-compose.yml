@@ -1,0 +1,32 @@
+services:
+  app: 
+    container_name: swivel
+    image: swivel1
+    build: .
+    restart: always
+    ports: 
+      - "3000:3000"
+    depends_on:
+      - mongo
+    networks: 
+      - swivel-app
+
+  mongo:
+    container_name: mongo
+    restart: always
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+    networks: 
+      - swivel-app
+  
+networks:
+  swivel-app: 
+    driver: bridge
+
+volumes:
+  mongodata:
+    driver: local
+      

@@ -13,7 +13,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 // Environment variables
 const PORT = process.env.PORT || 3000
 const dev = process.env.NODE_ENV !== 'production'
-const DB_URL = dev ? 'mongodb://localhost:27017' : process.env.DATABASE_URL
+const DB_URL = dev ? 'mongodb://localhost:27017' : process.env.DATABASE_URL // use 'mongodb://mongo:27017' for docker
 const AUTH0_ISSUER_BASE_URL = process.env.AUTH0_ISSUER_BASE_URL
 const AUTH0_AUD = process.env.AUTH0_AUD
 const API_URL = process.env.API_URL || 'http://localhost:3000/'
