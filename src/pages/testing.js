@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { useUser } from '@auth0/nextjs-auth0'
-import auth0 from './auth0'
+import auth0 from '../../auth/auth0'
 import fetcher from '../helpers/fetcher'
 
 export default function Testing({accessToken}) {
@@ -52,7 +52,7 @@ export default function Testing({accessToken}) {
 
     if(user) {
         return(
-            <div>
+            <div >
                 <h1>
                     {user.nickname} has logged in 
                 </h1> 
@@ -84,7 +84,7 @@ export default function Testing({accessToken}) {
 
                 <h2> </h2>
 
-                <button type="button" onClick={privateEnd}>
+                <button type="button" onClick={privateEnd} style={{height: '50px', width : '100px'}}>
                     private
                 </button>
 
@@ -127,7 +127,7 @@ export default function Testing({accessToken}) {
 
                 <h2> </h2>
 
-                <button type="button" onClick={privateEnd}>
+                <button type="button" onClick={privateEnd} style={{height: '30px', width : '100px'}} >
                     private
                 </button>
 
