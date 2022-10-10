@@ -86,22 +86,20 @@ function HeaderComponent(props) {
                     </Link>
                 </Col>
                 <Col span={8}>
-                    <Link href="/">
-                        <div style={{display: 'flex', justifyContent: 'right', paddingRight: '15px', paddingTop: '8px'}}>
-                            <Space size={15}>
-                                <PlusCircleOutlined style={{ fontSize: 20, color: 'white' }} onClick={showCreateModal}/>
-                                <Link href="/">
-                                    <MessageOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
-                                </Link>
-                                <Dropdown overlay={NotificationDropdown} placement="bottomRight">
-                                    <NotificationOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
-                                </Dropdown>
-                                <Dropdown overlay={ProfileDropdown} placement="bottomRight">
-                                    <UserOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
-                                </Dropdown>
-                            </Space>
-                        </div>
-                    </Link>
+                    <div style={{display: 'flex', justifyContent: 'right', paddingRight: '15px', paddingTop: '8px'}}>
+                        <Space size={15}>
+                            <PlusCircleOutlined style={{ fontSize: 20, color: 'white' }} onClick={showCreateModal}/>
+                            <Link href="/">
+                                <MessageOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
+                            </Link>
+                            <Dropdown overlay={NotificationDropdown} placement="bottomRight">
+                                <NotificationOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
+                            </Dropdown>
+                            <Dropdown overlay={ProfileDropdown} placement="bottomRight">
+                                <UserOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
+                            </Dropdown>
+                        </Space>
+                    </div>
                 </Col>
             </Row>
             { isCreateModalOpen && <CreateModal hideCreateModal={() => {setIsCreateModalOpen(false)}} />}

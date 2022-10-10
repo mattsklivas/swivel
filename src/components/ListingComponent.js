@@ -9,12 +9,12 @@ import '../hooks/useUserDetails'
 
 // Global categories object
 const CATEGORIES = {
-    trades : "Trades & Construction",
-    coding : "Programming & Tech",
-    music : "Music & Audio",
-    art : "Art & Fashion",
-    marketing : "Marketing",
-    other : "Other"
+    trades : 'Trades & Construction',
+    coding : 'Programming & Tech',
+    music : 'Music & Audio',
+    art : 'Art & Fashion',
+    marketing : 'Marketing',
+    other : 'Other'
 }
 
 export default function ListingComponent(props) {
