@@ -1,5 +1,6 @@
 /* eslint-disable quotes */
-import React from 'react'
+// import { React, useEffect } from 'react'
+import { React } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { useRouter } from 'next/router'
 import { Tabs } from 'antd'
@@ -30,7 +31,7 @@ export default function Home({accessToken}) {
     let { listings, listingsLoading, listingsError } = useListingsAll(token)
 
     // Get the logged-in user's listings
-    let { listingsUser, listingsUserLoading, listingsUserError } = useListingsUser(user ? user.nickname : '', token)
+    let { listingsUser, listingsUserLoading, listingsUserError } = useListingsUser(user ? user.nickname : '', token)     
 
     listings = [
         {

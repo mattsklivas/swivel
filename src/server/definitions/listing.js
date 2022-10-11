@@ -20,7 +20,7 @@ const ListingSchema = new mongoose.Schema({
     },
     date_created: {
         type: Date,
-        required: true
+        default: Date.now
     },
     description: {
         type: String,
@@ -31,7 +31,7 @@ const ListingSchema = new mongoose.Schema({
         data: Buffer,
         contentType: String
     },
-    offers: [String]
+    offers: []
 }, {
     collection: 'listing'
 })
