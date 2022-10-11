@@ -3,7 +3,7 @@ const express = require('express')
 // Get the express Router object
 const router = express.Router()
 
-// Import the User data model
+// Import the Listing data model
 const ListingModel = require('../definitions/listing')
 
 function routes(app) {
@@ -44,7 +44,7 @@ function routes(app) {
         }
     })
 
-    // Create a user
+    // Create a listing
     router.post('/create', async (req,res)=>{
         // pass the information to an object 
         const listModel = new ListingModel({
@@ -65,7 +65,7 @@ function routes(app) {
     // Update a listing
     router.patch('/update/:listingID', async(req,res) =>{
         try{
-            // update one
+            // update one listing
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
                 {$set: {title: req.body.title, description: req.body.description}}) // need to include image!!!
