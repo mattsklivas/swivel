@@ -1,4 +1,4 @@
-import auth0 from '../auth0'
+import auth0 from '../../../auth/auth0'
 
 // this is the way to prevent unathorized api access
 export default auth0.withApiAuthRequired((req, res) => {

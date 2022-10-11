@@ -26,7 +26,7 @@ const UserSchema = new mongoose.Schema({
     location: {
         type: String,
         unique: false,
-        required: true,
+        required: false,
         trim: true
     },
     description: {

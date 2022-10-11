@@ -117,47 +117,25 @@ function routes(app) {
     // Register user
     router.post('/register', async (req, res) => {
         try {
-            // Check is username exists and return 409 if so
-            const existsUser = await UserModel.findOne({ username: req.body.username })
+             // Check is username exists and return 409 if so
+             const existsUser = await UserModel.findOne({ username: req.body.username })
+             const existsEmail = await UserModel.findOne({ email: req.body.email })
+
             if (existsUser) {
                 return res.status(409).json({
                     message: 'An account with the username provided already exists',
                 })
-            }
-
-            // Check is username exists and return 409 if so
-            const existsEmail = await UserModel.findOne({ email: req.body.email })
-            if (existsEmail) {
-                return res.status(409).json({
-                    message: 'An account with the email provided already exists',
+            }else if (existsEmail) {
+                 return res.status(409).json({
+                     message: 'An account with the email provided already exists',
+                 })
+            }else{
+                const usermodel = new UserModel({
+                    email: req.body.email,
+                    username: req.body.username
                 })
-            }
-
-            // Encrypt the user's password
-            const salt = await bcrypt.genSalt()
-            const password = await bcrypt.hash(req.body.password, salt)
-            req.body.password = password
-
-            // Remove password confirmation from object
-            delete req.body.password_confirm
-
-            await UserModel.create(req.body).then((result) => {
-                //
-                // TODO: JWT token creation
-                
-                // Return the username to the client with the successful creation status code
-                res.status(201).json({
-                    userName: result.username,
-                    message: 'User registered successfully',
-                })
-            })
-            .catch((err) => {
-                // Inform the user the account could not be registered
-                res.status(400).send({
-                    message: 'Failed to register user',
-                    error: err.message,
-                })
-            })
+                usermodel.save().then(data=> {res.json(data)}).catch(err => {res.json({message: err.message})})
+             }
         } catch (err) {
             // Return error 500 if an internal server error occurred
             res.status(500).json({ message: err.message })
