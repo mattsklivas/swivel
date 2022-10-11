@@ -13,13 +13,13 @@ import useListingsUser from '../hooks/useListingsUser'
 
 // Global categories object
 const CATEGORIES = {
-    all: "All",
-    trades : "Trades & Construction",
-    coding : "Programming & Tech",
-    music : "Music & Audio",
-    art : "Art & Fashion",
-    marketing : "Marketing",
-    other : "Other"
+    all : 'All',
+    trades : 'Trades & Construction',
+    coding : 'Programming & Tech',
+    music : 'Music & Audio',
+    art : 'Art & Fashion',
+    marketing : 'Marketing',
+    other : 'Other'
 }
 
 export default function Home({accessToken}) {

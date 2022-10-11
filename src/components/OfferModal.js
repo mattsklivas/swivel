@@ -14,38 +14,38 @@ const CATEGORIES = {
     other : 'Other'
 }
 
-function CreateModal(props) {
+function OfferModal(props) {
     const [form] = Form.useForm()
     const [visible, setVisible] = useState(true)
     const parent = props
 
-    const handleSubmit = async (formData) => {
-        await fetcher('api/listing', {
-            method: 'CREATE',
+    const handleSubmit = async (listing, offer) => {
+        await fetcher('api/listing/offer', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                title: formData.title,
-                category: formData.category,
-                description: formData.description,
-                // image: formData.image
+                title: listing.title,
+                category: listing.category,
+                description: listing.description,
+                // image: listing.image
             }),
         })
         .then( () => {
             setVisible(false)
-            parent.hideCreateModal()
+            parent.hideOfferModal()
         })
         .catch(() => { 
             setVisible(false)
-            parent.hideCreateModal()
+            parent.hideOfferModal()
         })
     }
     
     const handleCancel = () => {
         setVisible(false)
         form.resetFields()
-        parent.hideCreateModal()
+        parent.hideOfferModal()
     }
 
     return (
@@ -93,4 +93,4 @@ function CreateModal(props) {
     )
 }
 
-export default CreateModal
+export default OfferModal
