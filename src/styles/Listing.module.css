@@ -1,0 +1,23 @@
+.single {
+    padding: 2px 16px;
+    background: rgb(255, 255, 255);
+    display: block;
+    margin: 20px 10px;
+    border-left: 8px solid #fff;
+    border: 1px solid  black;
+    color: black;
+    cursor: pointer;
+  }
+  .single:hover {
+    border-left: 8px solid #4979ff;
+    color: #4979ff;
+  }
+
+.listing{
+    color:black;
+    
+  }
+
+.listing:hover{
+  color: #4979ff;
+}

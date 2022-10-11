@@ -9,7 +9,61 @@ const bcrypt = require('bcrypt')
 // Import the User data model
 const UserModel = require('../definitions/user')
 
+// Import the Listing data model
+const ListingModel = require('../definitions/listing')
+
 function routes(app) {
+  /* Create a user for testing
+  router.post('/create', async (req, res) => {
+    // pass the information to an object
+
+    const user = new UserModel({
+      email: req.body.email,
+      username: req.body.username,
+      location: req.body.location,
+      fname: req.body.fname,
+      lname: req.body.lname
+    });
+
+    // save the listing to dbg
+    try {
+      const saveUser = await user.save();
+      res.status(200).json(saveUser);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }); */
+
+  router.get('/details/:userID', async (req, res) => {
+    try {
+      const userListings = await ListingModel.find({
+        creator: req.params.userID
+      });
+      const user = await UserModel.findOne({ username: req.params.userID})
+      const saved_listings = await ListingModel.find({_id: user.saved_listings})
+      
+      res.json({user, saved_listings, userListings});
+      res.status(200).send({
+        message: 'profile retrieved from database',
+      });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+  
+  router.patch('/update/:UserID', async(req,res) =>{
+    try{
+        //update one
+        const updateUser = await UserModel.updateOne(
+            {username: req.params.UserID}, 
+            {$set: {email: req.body.email, username: req.body.username, location: req.body.location, fname: req.body.fname, lname: req.body.lname}})
+    res.json(updateUser)
+    }catch(err){
+        res.status(500).json({ message: err.message })
+    }
+});
+
     // Get all users
     router.get('/', async (req, res) => {
         try {
@@ -24,6 +78,8 @@ function routes(app) {
     })
 
     // User login
+    // Check if user is logged in
+    // return ....
     router.post('/login', async (req, res) => {
         try {
             // Fetch the user details in the database
