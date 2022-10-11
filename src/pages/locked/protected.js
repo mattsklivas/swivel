@@ -1,5 +1,5 @@
 import React from 'react'
-import auth0 from '../auth0'
+import auth0 from '../../../auth/auth0'
 
 // another way of protecting a page if user is not logged in, when get serversideprops is required. 
 export default function Protected({data}) {

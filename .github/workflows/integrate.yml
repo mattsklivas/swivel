@@ -1,0 +1,31 @@
+name: swivel CI testing
+
+on:
+  push:
+    branches: [ tarun ]
+
+
+jobs:
+  test_push_request:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - run: yarn install
+        # add test
+      - run: yarn build
+
+      - uses: mr-smithers-excellent/docker-build-push@v5
+        name: Docker image Build & push
+        with:
+          image: tarune/sample
+          registry: docker.io
+          tag: latest 
+          #image name is branch/tag
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+#next step take the docker image from hub and deploy on google cloud
+# source : https://github.com/mr-smithers-excellent/docker-build-push

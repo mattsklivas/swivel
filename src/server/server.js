@@ -4,6 +4,7 @@ const next = require('next')
 const {expressjwt: expressJwt} = require('express-jwt')
 const jwks = require('jwks-rsa')
 const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
 
 // Import dotenv to get environment variables
 const path = require('path')
@@ -12,7 +13,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 // Environment variables
 const PORT = process.env.PORT || 3000
 const dev = process.env.NODE_ENV !== 'production'
-const DB_URL = dev ? 'mongodb://localhost:27017' : process.env.DATABASE_URL
+const DB_URL = dev ? 'mongodb://localhost:27017' : process.env.DATABASE_URL // use 'mongodb://mongo:27017' for docker
 const AUTH0_ISSUER_BASE_URL = process.env.AUTH0_ISSUER_BASE_URL
 const AUTH0_AUD = process.env.AUTH0_AUD
 const API_URL = process.env.API_URL || 'http://localhost:3000/'
@@ -51,10 +52,10 @@ const server = express()
 // Create express server
 app.prepare().then(() => {
     server.use(cors(API_URL))
-
+    server.use(bodyParser.json())
     // Include 'user' routes
     const userRoutes = require('./routes/user')
-    server.use('/api/user', jwtCheck, userRoutes(server))
+    server.use('/api/user', userRoutes(server))
 
     // Include 'listing' routes
     const listingRoutes = require('./routes/listing')
