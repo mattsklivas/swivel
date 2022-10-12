@@ -14,7 +14,7 @@ export default function ListComponent(props) {
     const user = props.user
     const canOffer = props.canOffer
 
-    if (category !== 'all') {
+    if (category !== 'all' && listings && listings.length > 0) {
         listings = props.listings.filter(listing => listing.category === category)
     }
 
