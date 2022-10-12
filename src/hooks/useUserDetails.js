@@ -1,32 +1,10 @@
 import useSWR from 'swr'
 import hookFetcher from '../helpers/hookFetcher'
 
-// Fetch a user's details
-function useUser(username, token) {
-    const { 
-        data: userResponse, 
-        error: userDetailsError
-    } = useSWR([
-        `/api/user/details/${username}`, token], hookFetcher
-    , {
-        shouldRetryOnError: false,
-        revalidateIfStale: false,
-        revalidateOnFocus: false,
-        revalidateOnReconnect: false
-    })
-
-    let userDetails = []
-
-    if (userResponse) {
-        userDetails = userResponse.data
-    }
-
-    return {
-        userDetails,
-        userDetailsError,
-        userDetailsLoading: (!userDetailsError && !userResponse),
-    }
+// Fetch a user's profile details + associated listings
+function useUserDetails(nickname, token) {
+    return useSWR([`/api/user/profile/${nickname}`, token], hookFetcher)
 }
 
 // Export the hook
-export default useUser
+export default useUserDetails

@@ -2,17 +2,8 @@
 import { React, useState } from 'react'
 import { Input, Select, Upload, Modal, Form } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import fetcher from '../helpers/fetcher'
-
-// Global categories object
-const CATEGORIES = {
-    trades : 'Trades & Construction',
-    coding : 'Programming & Tech',
-    music : 'Music & Audio',
-    art : 'Art & Fashion',
-    marketing : 'Marketing',
-    other : 'Other'
-}
+import fetcher from '../../helpers/fetcher'
+import { CATEGORIES } from '../../helpers/categories'
 
 function OfferModal(props) {
     const [form] = Form.useForm()

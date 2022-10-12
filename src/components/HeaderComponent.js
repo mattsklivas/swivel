@@ -4,11 +4,13 @@ import { Col, Row, Dropdown, Menu, Space} from 'antd'
 import { UserOutlined, NotificationOutlined, MessageOutlined, PlusCircleOutlined } from '@ant-design/icons'
 import Link from 'next/link'
 import Image from 'next/image'
-import CreateModal from './CreateModal'
+import CreateModal from './modals/CreateModal'
 import logo from '../../public/icon.svg'
 
 function HeaderComponent(props) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+    const user = props.user
+    const token = props.token
 
     const showCreateModal = () => {
         setIsCreateModalOpen(true)
@@ -102,7 +104,7 @@ function HeaderComponent(props) {
                     </div>
                 </Col>
             </Row>
-            { isCreateModalOpen && <CreateModal hideCreateModal={() => {setIsCreateModalOpen(false)}} />}
+            { isCreateModalOpen && <CreateModal user={user} token={token} hideCreateModal={() => {setIsCreateModalOpen(false)}} />}
         </>
     )
 }

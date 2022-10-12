@@ -1,51 +1,47 @@
 // Import React and Antd elements
 import { React, useState } from 'react'
+import { useRouter } from 'next/router'
 import { Input, Select, Upload, Modal, Form } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import fetcher from '../helpers/fetcher'
-
-// Global categories object
-const CATEGORIES = {
-    trades : 'Trades & Construction',
-    coding : 'Programming & Tech',
-    music : 'Music & Audio',
-    art : 'Art & Fashion',
-    marketing : 'Marketing',
-    other : 'Other'
-}
+import fetcher from '../../helpers/fetcher'
+import { CATEGORIES } from '../../helpers/categories'
 
 function CreateModal(props) {
+    const router = useRouter()
     const [form] = Form.useForm()
     const [visible, setVisible] = useState(true)
-    const parent = props
+    const user = props.user
+    const token = props.token
 
     const handleSubmit = async (formData) => {
-        await fetcher('api/listing', {
-            method: 'CREATE',
+        await fetcher(token, 'api/listing/create', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                creator: user.nickname,
                 title: formData.title,
                 category: formData.category,
                 description: formData.description,
                 // image: formData.image
             }),
         })
-        .then( () => {
+        .then( (res) => {
             setVisible(false)
-            parent.hideCreateModal()
+            props.hideCreateModal()
+            router.push(`/listing/${res.id}`)
         })
         .catch(() => { 
             setVisible(false)
-            parent.hideCreateModal()
+            props.hideCreateModal()
         })
     }
     
     const handleCancel = () => {
         setVisible(false)
         form.resetFields()
-        parent.hideCreateModal()
+        props.hideCreateModal()
     }
 
     return (

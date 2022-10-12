@@ -18,7 +18,7 @@ export default function ListComponent(props) {
         listings = props.listings.filter(listing => listing.category === category)
     }
 
-    if (listings.length > 0) {
+    if (listings && listings.length > 0) {
         return (
             <div>
                 {category !== 'all' ? 

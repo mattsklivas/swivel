@@ -74,6 +74,8 @@
         "default-case": "off",
         "react/destructuring-assignment": "off",
         "prefer-const": "off",
-        "object-shorthand": "off"
+        "object-shorthand": "off",
+        "camelcase": "off",
+        "no-underscore-dangle": "off"
     }
 }

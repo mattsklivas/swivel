@@ -7,35 +7,33 @@ const router = express.Router()
 const ListingModel = require('../definitions/listing')
 
 function routes(app) {
-    // Return all object
-    router.get('/all', async (req,res) => {
-        const listing = await ListingModel.find()
-        res.json(listing)
-        try{
-            res.status(200).send({
-            message: 'Listings retrieved from database',
-        })
+    // Return all listings
+    router.get('/all', async (req, res) => {
+        try {
+            const listings = await ListingModel.find()
+            res.status(200).json(listings)
         } catch (err) {
             res.status(500).json({ message: err.message })
         }
     })
 
-    // Return one listing
-    router.get('/findByID/:listingID', async (req, res) => {
+    // Return one listing and the listing's offers
+    // TODO: include listing offers as well
+    router.get('/:id', async (req, res) => {
         try {
             // Fetch one listing in the database
-            const retrievedListing = await ListingModel.findOne({ username: req.params.listingID })      
-            res.status(200).json(retrievedListing)
+            const listing = await ListingModel.findById(req.params.id)    
+            res.status(200).json(listing)
         } catch (err) {
             // Return error 500 if an internal server error occurred
             res.status(500).json({ message: err.message })
         }
     })
 
-    // Return all the listings from the user
-    router.get('/userListing/:creator', async (req, res) => {
+    // Return all the listings from a user
+    // TODO: test
+    router.get('/byUser/:creator', async (req, res) => {
         try {
-            // Fetch one listing in the database
             const retrievedListing = await ListingModel.find({ creator: req.params.creator })      
             res.status(200).json(retrievedListing)
         } catch (err) {
@@ -45,39 +43,40 @@ function routes(app) {
     })
 
     // Create a listing
-    router.post('/create', async (req,res)=>{
-        // pass the information to an object 
-        const listModel = new ListingModel({
-                creator: req.body.creator,
-                category: req.body.category,
-                title: req.body.title,
-                description: req.body.description 
-        })       
-        // save the listing to db
-        try{
-            const saveListing = await listModel.save()
-            res.status(200).json(saveListing)
-        }catch(err){
+    router.post('/create', async (req, res) => {     
+        try {
+            // Build the listing object
+            const listing = new ListingModel({
+                    creator: req.body.creator,
+                    category: req.body.category,
+                    title: req.body.title,
+                    description: req.body.description 
+            })  
+            const savedListing = await listing.save()
+
+            res.status(200).json({id: savedListing._id.toString()})
+        } catch(err) {
             res.status(500).json({message: err.message})
         }
     })
 
     // Update a listing
-    router.patch('/update/:listingID', async(req,res) =>{
-        try{
-            // update one listing
+    router.patch('/:listingID', async(req, res) => {
+        try {
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
-                {$set: {title: req.body.title, description: req.body.description}}) // need to include image!!!
+                {$set: {title: req.body.title, category: req.body.category, description: req.body.description}}
+            )
             res.status(200).json(updateListing)
-        }catch(err){
+        } catch(err) {
             res.status(500).json({message: err})
         }
     })
 
-    // Add offers to a listing
-    router.patch('/addOffer/:listingID', async(req,res)=>{
-        try{
+    // Add an offer to a listing
+    // TODO: Need to review and test (Matt)
+    router.patch('/offer/:listingID', async(req, res) => {
+        try {
             // Get the string of ids from the body and split by ',' into an array
             const offerArrayNew = req.body.id.split(',')
             // Get current offerings
@@ -102,7 +101,7 @@ function routes(app) {
     })
 
     // Remove offers from a listing
-    router.patch('/deleteOffer/:listingID', async(req,res)=>{
+    router.patch('/deleteOffer/:listingID', async(req,res) => {
         try{
             // Get the string of ids from the body and split by ',' into an array
             const removeOfferArray = req.body.id.split(',')
@@ -117,11 +116,11 @@ function routes(app) {
     })
 
     // Delete one listing
-    router.delete('/delete/:listingID', async(req,res) =>{
-        try{
-            const removeListing =	await ListingModel.remove({_id: req.params.listingID})
+    router.delete('/delete/:listingID', async(req, res) => {
+        try {
+            const removeListing = await ListingModel.remove({_id: req.params.listingID})
             res.status(200).json(removeListing)
-        }catch(err){
+        } catch(err) {
             res.status(500).json({message: err})
         }
     })

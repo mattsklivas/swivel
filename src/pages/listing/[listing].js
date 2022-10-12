@@ -3,7 +3,7 @@
 /* eslint-disable object-shorthand */
 /* eslint-disable quotes */
 // Import React
-import { React, useState } from 'react'
+import { React, useState, useEffect } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { useRouter } from 'next/router'
 import { Space, Button, Tabs, Popconfirm } from 'antd'
@@ -12,20 +12,12 @@ import auth0 from '../../../auth/auth0'
 import LoadingComponent from '../../components/LoadingComponent'
 import HeaderComponent from '../../components/HeaderComponent'
 // import OfferModal from '../../components/OfferModal'
+// import UpdateListingModal from '../../components/UpdateListingModal'
 import ListComponent from '../../components/ListComponent'
 import useListing from '../../hooks/useListing'
-import useListingsUser from '../../hooks/useListingsUser'
+import useUserListings from '../../hooks/useUserListings'
 import fetcher from '../../helpers/fetcher'
-
-// Global categories object
-const CATEGORIES = {
-    trades : 'Trades & Construction',
-    coding : 'Programming & Tech',
-    music : 'Music & Audio',
-    art : 'Art & Fashion',
-    marketing : 'Marketing',
-    other : 'Other'
-}
+import { CATEGORIES } from '../../helpers/categories'
 
 export default function Listing({accessToken}) {
     const router = useRouter()
@@ -40,18 +32,30 @@ export default function Listing({accessToken}) {
     const [isModalOpen, setIsModalOpen] = useState(false)
     
     // Get the listing details
-    let { listing, listingLoading, listingError } = useListing(listingID, token)
+    const { data: listing } = useListing(listingID, token)
 
     // Get the logged-in user's listings
-    let { listingsUser, listingsUserLoading, listingsUserError } = useListingsUser(user ? user.nickname : '', token)
+    const { data: userListings } = useUserListings(user ? user.nickname : '', token)
+
+    // Flag to check if hooks have completed
+    const [initialized, setInitialized] = useState(false)
+
+    useEffect(() => {
+        if (!initialized && listing !== 'undefined' && userListings !== 'undefined' && !isLoading) {
+            setInitialized(true)
+        }
+    })
 
     // Delete confirmation popup state variables
-    const [open, setOpen] = useState(false)
+    const [openConfirm, setOpenConfirm] = useState(false)
     const [confirmLoading, setConfirmLoading] = useState(false)
+
+    // Update listing state variable
+    const [showUpdateModal, setShowUpdateModal] = useState(false)
 
     // Show delete confirmation
     const showDeleteConfirm = () => {
-        setOpen(true)
+        setOpenConfirm(true)
     }
 
     // Handle delete confirmation
@@ -64,11 +68,11 @@ export default function Listing({accessToken}) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id: listing.id
+                id: listing._id
             }),
         })
         .then( () => {
-            setOpen(false)
+            setOpenConfirm(false)
             setConfirmLoading(false)
         })
         .then( () => {
@@ -76,131 +80,23 @@ export default function Listing({accessToken}) {
             router.push('/')
         })
         .catch(() => { 
-            setOpen(false)
+            setOpenConfirm(false)
             setConfirmLoading(false)
         })
     }
 
     // Handle delete cancellation
     const handleCancel = () => {
-        setOpen(false)
+        setOpenConfirm(false)
     }
 
-    let offers = [
-        {
-            creator: 'username',
-            category: 'trades',
-            title: 'This is a listing title',
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            date_created: '20/09/2022',
-            image: null,
-            offers: ['1', '2', '3']
-        },
-        {
-            creator: 'username',
-            category: 'trades',
-            title: 'This is a listing title',
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            date_created: '20/09/2022',
-            image: null,
-            offers: ['1', '2', '3']
-        },
-        {
-            creator: 'username',
-            category: 'trades',
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            title: 'This is a listing title',
-            date_created: '20/09/2022',
-            image: null,
-            offers: ['1', '2', '3']
-        }
-    ]
-
-    let myOffers = [
-        {
-            creator: 'mattsklivas',
-            category: 'music',
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            title: 'This is a listing title2',
-            date_created: '20/09/2022',
-            image: null,
-            offers: ['1', '2', '3']
-        },
-        {
-            creator: 'mattsklivas',
-            category: 'music',
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            title: 'This is a listing title2',
-            date_created: '20/09/2022',
-            image: null,
-            offers: ['1', '2', '3']
-        },
-        {
-            creator: 'mattsklivas',
-            category: 'music',
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            title: 'This is a listing title2',
-            date_created: '20/09/2022',
-            image: null,
-            offers: ['1', '2', '3']
-        }
-    ]
-
-    listing = {
-        creator: 'mattsklivas',
-        category: 'trades',
-        title: 'This is a listing title',
-        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        date_created: '20/09/2022',
-        image: null,
-        offers: offers,
-        myOffers: myOffers
+    // Handle displaying of listing update modal
+    const handleShowUpdateModal = () => {
+        setShowUpdateModal(true)
     }
 
-    listingsUser = [
-        {
-            id: '123',
-            creator: 'mattsklivas',
-            category: 'trades',
-            title: 'This is a listing title',
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            date_created: '20/09/2022',
-            image: null,
-            offers: ['1', '2', '3']
-        },
-        {
-            id: '123',
-            creator: 'mattsklivas',
-            category: 'trades',
-            title: 'This is a listing title',
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            date_created: '20/09/2022',
-            image: null,
-            offers: ['1', '2', '3']
-        },
-        {
-            id: '123',
-            creator: 'mattsklivas',
-            category: 'trades',
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            title: 'This is a listing title',
-            date_created: '20/09/2022',
-            image: null,
-            offers: ['1', '2', '3']
-        },
-        {
-            id: '123',
-            creator: 'mattsklivas',
-            category: 'music',
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            title: 'This is a listing title',
-            date_created: '20/09/2022',
-            image: null,
-            offers: ['1', '2', '3']
-        }
-    ]
-
-    if (user && !isLoading) {
+    // If the hooks have completed, display the page content
+    if (user && initialized) {
         return (
             <>
                 <HeaderComponent user={user}/>
@@ -216,38 +112,40 @@ export default function Listing({accessToken}) {
                             <Space direction="vertical" align="start">
                                 <span style={{fontSize: '25px', fontWeight: 600}}>{listing.title}</span>
                                 <div style={{fontSize: '14px'}}>
-                            <Space direction="horizontal" align="start">
-                                <FileTextOutlined style={{fontSize: 20}}/>
-                                <span>{listing.description.length > 340 ? `${listing.description.substring(0, 340)}...` : listing.description}</span>
-                            </Space>
-                            </div>
-                            <div style={{fontSize: '14px', cursor: 'pointer'}} onClick={() => {router.push(`/profile/${listing.creator}`)}}>
-                                <UserOutlined style={{fontSize: 20}}/>
-                                <span style={{paddingLeft: 5}}>{`${listing.creator}`}</span>
-                            </div>
-                            <div style={{fontSize: '14px'}}>
-                                <CalendarOutlined style={{fontSize: 20}}/>
-                                <span style={{paddingLeft: 5}}>{`${listing.date_created}`}</span>
-                            </div>
-                            <div style={{fontSize: '14px'}}>
-                                <AppstoreOutlined style={{fontSize: 20}}/>
-                                <span style={{paddingLeft: 5}}>{CATEGORIES[listing.category]}</span>
-                            </div>
+                                <Space direction="horizontal" align="start">
+                                    <FileTextOutlined style={{fontSize: 20}}/>
+                                    <span>{listing.description.length > 340 ? `${listing.description.substring(0, 340)}...` : listing.description}</span>
+                                </Space>
+                                </div>
+                                <div style={{fontSize: '14px', cursor: 'pointer'}} onClick={() => {router.push(`/profile/${listing.creator}`)}}>
+                                    <UserOutlined style={{fontSize: 20}}/>
+                                    <span style={{paddingLeft: 5}}>{`${listing.creator}`}</span>
+                                </div>
+                                <div style={{fontSize: '14px'}}>
+                                    <CalendarOutlined style={{fontSize: 20}}/>
+                                    <span style={{paddingLeft: 5}}>{`${listing.date_created.split('T')[0]}`}</span>
+                                </div>
+                                <div style={{fontSize: '14px'}}>
+                                    <AppstoreOutlined style={{fontSize: 20}}/>
+                                    <span style={{paddingLeft: 5}}>{CATEGORIES[listing.category]}</span>
+                                </div>
+                                { listing.creator === user.nickname &&
+                                    <Space direction="horizontal" align="start">
+                                        <Button onClick={handleShowUpdateModal}>Modify</Button>
+                                        <Popconfirm
+                                            title="Are you sure you wish to delete this listing?"
+                                            open={openConfirm}
+                                            onConfirm={handleOk}
+                                            okButtonProps={{ loading: confirmLoading }}
+                                            onCancel={handleCancel}
+                                        >
+                                            <Button danger type="primary" onClick={showDeleteConfirm}>Delete</Button>
+                                        </Popconfirm>
+                                    </Space>
+                                }
                             </Space>
                         </Space>
                     </Space>
-                    { listing.creator === user.nickname &&
-                        <Popconfirm
-                            style={{float: 'right', marginTop: '-40px'}}
-                            title="Are you sure you wish to delete this listing?"
-                            open={open}
-                            onConfirm={handleOk}
-                            okButtonProps={{ loading: confirmLoading }}
-                            onCancel={handleCancel}
-                        >
-                            <Button danger type="primary" style={{float: 'right', marginTop: '-40px'}} onClick={showDeleteConfirm}>Delete Listing</Button>
-                        </Popconfirm>
-                    }
                     <Tabs
                         centered
                         style={{padding: '20px 0 0 0'}}
@@ -265,22 +163,24 @@ export default function Listing({accessToken}) {
                                 ),
                                 key: id,
                                 children: (
-                                    <ListComponent listings={!i ? listing.offers : listing.myOffers} category="all" user={user} userListings={listingsUser} canOffer/>
+                                    <ListComponent listings={!i ? listing.offers : listing.myOffers} category="all" user={user} userListings={userListings} canOffer/>
                                 ),
                             }
                         })} />
-                    {/* { isModalOpen && <OfferModal hideModal={() => {setIsModalOpen(false)}} listing={listing} userListings={listingsUser} />} */}
+                    {/* { isModalOpen && <OfferModal hideModal={() => {setIsModalOpen(false)}} listing={listing} userListings={userListings} />} */}
                 </div>
                 <div style={{height: 30}}/>
             </>
         )
-    } else if (isLoading) {
+    // If the hooks are loading
+    } else if (!initialized && isLoading) {
         return (
             <LoadingComponent
                 message="Loading..."
             />
         )
-    } else {
+    // If no user was found, redirect to login page
+    } else if (!isLoading && !user) {
         router.push('/api/auth/login')
     }
 }

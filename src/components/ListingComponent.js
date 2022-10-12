@@ -6,16 +6,7 @@ import { useRouter } from 'next/router'
 import { Space, Button } from 'antd'
 import { EyeInvisibleOutlined, UserOutlined, CalendarOutlined, AppstoreOutlined, FileTextOutlined } from '@ant-design/icons'
 import '../hooks/useUserDetails'
-
-// Global categories object
-const CATEGORIES = {
-    trades : 'Trades & Construction',
-    coding : 'Programming & Tech',
-    music : 'Music & Audio',
-    art : 'Art & Fashion',
-    marketing : 'Marketing',
-    other : 'Other'
-}
+import { CATEGORIES } from '../helpers/categories'
 
 export default function ListingComponent(props) {
     const router = useRouter()
@@ -40,7 +31,7 @@ export default function ListingComponent(props) {
                 </div>
                 <Space direction="horizontal" align="start">
                     <Space direction="vertical" align="start">
-                        <span style={{fontSize: '17px', fontWeight: 600, cursor: 'pointer'}} onClick={() => router.push(`/listing/${listing.id}`)}>{listing.title}</span>
+                        <span style={{fontSize: '17px', fontWeight: 600, cursor: 'pointer'}} onClick={() => router.push(`/listing/${listing._id}`)}>{listing.title}</span>
                         <div style={{fontSize: '14px'}}>
                             <Space direction="horizontal" align="start">
                                 <FileTextOutlined style={{fontSize: 20}}/>
@@ -53,7 +44,7 @@ export default function ListingComponent(props) {
                         </div>
                         <div style={{fontSize: '14px'}}>
                             <CalendarOutlined style={{fontSize: 20}}/>
-                            <span style={{paddingLeft: 5}}>{`${listing.date_created}`}</span>
+                            <span style={{paddingLeft: 5}}>{`${listing.date_created.split('T')[0]}`}</span>
                         </div>
                         {showCategory && 
                             <div style={{fontSize: '14px'}}>
@@ -62,7 +53,7 @@ export default function ListingComponent(props) {
                             </div>
                         }
                         <Space direction="horizontal" size={0} style={{paddingTop: 5}}>
-                            <Button style={{margin: '0 5px 0 0'}} onClick={() => {router.push(`/listing/${listing.id}`)}}>View Listing</Button>
+                            <Button style={{margin: '0 5px 0 0'}} onClick={() => {router.push(`/listing/${listing._id}`)}}>View Listing</Button>
                             {/* TODO: Make this into a select dropdown, show user's listings */}
                             {canOffer && <Button style={{margin: '0 0 0 5px'}} type="primary">Make Offer</Button>}
                         </Space>

@@ -3,30 +3,7 @@ import hookFetcher from '../helpers/hookFetcher'
 
 // Fetch all listings
 function useListings(token) {
-    const { 
-        data: listingsResponse, 
-        error: listingsError
-    } = useSWR([
-        '/api/listing/all/', token], hookFetcher
-    , {
-        shouldRetryOnError: false,
-        revalidateIfStale: false,
-        revalidateOnFocus: false,
-        revalidateOnReconnect: false
-    })
-
-    let listings = []
-
-    if (listingsResponse) {
-        listings = listingsResponse.data
-    }
-
-    return {
-        listings,
-        listingsError,
-        listingsLoading: (!listingsError && !listingsResponse),
-    }
+    return useSWR(['/api/listing/all/', token], hookFetcher)
 }
 
-// Export the hook
 export default useListings

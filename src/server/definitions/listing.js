@@ -31,7 +31,7 @@ const ListingSchema = new mongoose.Schema({
         data: Buffer,
         contentType: String
     },
-    offers: []
+    offers: [String]
 }, {
     collection: 'listing'
 })

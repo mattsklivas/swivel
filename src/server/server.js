@@ -58,19 +58,14 @@ server.use(bodyParser.json())
 app.prepare().then(() => {
     server.use(cors(API_URL))
     server.use(bodyParser.json())
+
     // Include 'user' routes
-    // const userRoutes = require('./routes/user')
-    // server.use('/api/user', jwtCheck, userRoutes(server))
     const userRoutes = require('./routes/user')
-    server.use('/api/user', userRoutes(server))
+    server.use('/api/user', jwtCheck, userRoutes(server))
 
     // Include 'listing' routes
     const listingRoutes = require('./routes/listing')
-    server.use('/api/listing', listingRoutes(server))
-
-    // include 'sample' routes, only a demo for using jwttoken authorization
-    const sampleRoute = require('./routes/sample')
-    server.use('/api/sample', jwtCheck, sampleRoute(server)) // pass the jwtCheck to authorize token
+    server.use('/api/listing', jwtCheck, listingRoutes(server))
     
     // Obtain any route and handle the request
     server.get('*', (req, res) => handle(req, res))

@@ -1,18 +1,21 @@
 // Import React and Antd elements
 import { React, useState } from 'react'
+import { useRouter } from 'next/router'
 import { Input, Upload, Modal, Form } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import fetcher from '../helpers/fetcher'
-import LoadingComponent from './LoadingComponent'
+import fetcher from '../../helpers/fetcher'
+import LoadingComponent from '../LoadingComponent'
 
 function CreateModal(props) {
+    const router = useRouter()
     const [form] = Form.useForm()
     const [visible, setVisible] = useState(true)
-    const parent = props
+    const nickname = props.user.nickname
+    const userDetails = props.userDetails
 
     const handleSubmit = async (formData) => {
-        await fetcher('api/user/profile', {
-            method: 'POST',
+        await fetcher(`api/user/profile/${nickname}`, {
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -26,23 +29,24 @@ function CreateModal(props) {
         })
         .then( () => {
             setVisible(false)
-            parent.hideModal()
+            props.hideModal()
+            router.push(`/profile/${nickname}`)
         })
         .catch(() => { 
             setVisible(false)
-            parent.hideModal()
+            props.hideModal()
         })
     }
     
     const handleCancel = () => {
         setVisible(false)
         form.resetFields()
-        parent.hideModal()
+        props.hideModal()
     }
 
     return (
         <Modal className="edit-profile-modal" title="Edit Profile" open={visible} onOk={form.submit} onCancel={handleCancel}>
-            {parent.userDetails ?
+            {userDetails ?
                 <Form
                     form={form}
                     labelCol={{ span: 5 }}
@@ -51,16 +55,16 @@ function CreateModal(props) {
                     autoComplete="off"
                 >  
                     <Form.Item label="First Name" name="fname">
-                        <Input defaultValue={parent.userDetails.fname || ''} style={{ width: 200 }}/>
+                        <Input defaultValue={userDetails.fname || ''} style={{ width: 200 }}/>
                     </Form.Item>
                     <Form.Item label="Last Name" name="lname">
-                        <Input defaultValue={parent.userDetails.lname || ''} style={{ width: 200 }}/>
+                        <Input defaultValue={userDetails.lname || ''} style={{ width: 200 }}/>
                     </Form.Item>
                     <Form.Item label="Location" name="location">
-                        <Input defaultValue={parent.userDetails.location || ''} />
+                        <Input defaultValue={userDetails.location || ''} />
                     </Form.Item>
                     <Form.Item label="Description" name="description">
-                        <Input.TextArea defaultValue={parent.userDetails.description || ''} autoSize={{ minRows: 4, maxRows: 6 }}/>
+                        <Input.TextArea defaultValue={userDetails.description || ''} autoSize={{ minRows: 4, maxRows: 6 }}/>
                     </Form.Item>
                     <Form.Item label="Upload" value="image">
                         <Upload listType="picture-card">
