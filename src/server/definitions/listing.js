@@ -31,7 +31,11 @@ const ListingSchema = new mongoose.Schema({
         data: Buffer,
         contentType: String
     },
-    offers: [String]
+    offers: [String],
+    accepted: {
+        type: String,
+        default: null
+    },
 }, {
     collection: 'listing'
 })
