@@ -89,7 +89,7 @@ export default function Profile({accessToken}) {
                                 ),
                                 key: id,
                                 children: (
-                                    <ListComponent listings={i ? userDetails.saved : userDetails.listings} category="all" user={user} saved={userDetailsLoggedIn.details.saved} userListings={userListings} token={token} canOffer={false} />
+                                    <ListComponent listings={i ? userDetails.saved : userDetails.listings} category="all" user={user} saved={userDetailsLoggedIn.saved} userListings={userListings} token={token} canOffer={false} />
                                 ),
                             }
                         })} />

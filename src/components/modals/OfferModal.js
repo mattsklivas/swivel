@@ -1,7 +1,9 @@
 // Import React and Antd elements
 import { React, useState } from 'react'
-import { Modal, Radio, Space } from 'antd'
+import { Modal, Radio, Space, Divider } from 'antd'
+import { CalendarOutlined, AppstoreOutlined, FileTextOutlined } from '@ant-design/icons'
 import fetcher from '../../helpers/fetcher'
+import { CATEGORIES } from '../../helpers/categories'
 
 function OfferModal(props) {
     const [visible, setVisible] = useState(true)
@@ -12,8 +14,8 @@ function OfferModal(props) {
 
     // Make offer
     const handleSubmit = async () => {
-        await fetcher('api/listing/offer', {
-            method: 'POST',
+        await fetcher(props.token, 'api/listing/offer', {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -43,12 +45,37 @@ function OfferModal(props) {
     }
 
     return (
-        <Modal className="create-modal" title="Make An Offer" open={visible} onOk={handleSubmit} onCancel={handleCancel} okButtonProps={{ disabled: userListings.length === 0 }}>
+        <Modal className="create-modal" title="Make An Offer" open={visible} onOk={handleSubmit} onCancel={handleCancel} okButtonProps={{ disabled: userListings.length === 0 }} width={500}>
             {userListings.length !== 0 ?
-                <Radio.Group onChange={onChange} value={value}>
+                <Radio.Group onChange={onChange} value={value} style={{paddingBottom: 20, height: '50vh', overflow: 'auto'}}>
                     <Space direction="vertical">
-                        {userListings.map(item => {
-                            return (<Radio value={item._id}>{item.title}</Radio>)
+                        {userListings.map((item, i) => {
+                            return (
+                                <>
+                                    <Radio className="offer-radio-btn" key={item._id} value={item._id}>
+                                        <Space direction="vertical" align="start">
+                                            <div style={{width: '55vh'}}>
+                                                <span style={{fontSize: '20px', fontWeight: 600}}>{item.title}</span>
+                                                <div style={{fontSize: '14px'}}>
+                                                <Space direction="horizontal" align="start">
+                                                    <FileTextOutlined style={{fontSize: 20}}/>
+                                                    <span>{item.description.length > 340 ? `${item.description.substring(0, 340)}...` : item.description}</span>
+                                                </Space>
+                                                </div>
+                                                <div style={{fontSize: '14px'}}>
+                                                    <CalendarOutlined style={{fontSize: 20}}/>
+                                                    <span style={{paddingLeft: 5}}>{`${item.date_created.split('T')[0]}`}</span>
+                                                </div>
+                                                <div style={{fontSize: '14px'}}>
+                                                    <AppstoreOutlined style={{fontSize: 20}}/>
+                                                    <span style={{paddingLeft: 5}}>{CATEGORIES[item.category]}</span>
+                                                </div>
+                                            </div>
+                                        </Space>
+                                    </Radio>
+                                    {i < userListings.length - 1 && <Divider />}
+                                </>
+                            )
                         })}
                     </Space>
                 </Radio.Group>

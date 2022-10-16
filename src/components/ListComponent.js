@@ -13,8 +13,10 @@ export default function ListComponent(props) {
     const user = props.user
     const saved = props.saved
     const userListings = props.userListings
-    const canOffer = props.canOffer
+    const canOffer = props.canOffer || false
+    const canAccept = props.canAccept || false
     const token = props.token
+    const sourceListing = props.sourceListing || null
 
     if (category !== 'all' && listings && listings.length > 0) {
         listings = props.listings.filter(listing => listing.category === category)
@@ -26,12 +28,36 @@ export default function ListComponent(props) {
                 {category !== 'all' ? 
                     listings.map((listing, i) => {
                         return (
-                            <ListingComponent key={i} listing={listing} showCategory={false} user={user} saved={saved} userListings={userListings} canOffer={canOffer} token={token}/>
+                            <ListingComponent 
+                                key={i} 
+                                listing={listing} 
+                                showCategory={false} 
+                                user={user} 
+                                saved={saved} 
+                                userListings={userListings} 
+                                canOffer={canOffer} 
+                                canAccept={canAccept} 
+                                token={token}
+                                sourceListing={sourceListing}
+                            />
                         )
                     })
                     :
                     listings.map((listing, i) => {
-                        return (<ListingComponent key={i} listing={listing} showCategory={true} user={user} saved={saved} userListings={userListings} canOffer={canOffer} token={token}/>)
+                        return (
+                            <ListingComponent 
+                                key={i} 
+                                listing={listing} 
+                                showCategory={true} 
+                                user={user} 
+                                saved={saved} 
+                                userListings={userListings} 
+                                canOffer={canOffer} 
+                                canAccept={canAccept} 
+                                token={token}
+                                sourceListing={sourceListing}
+                            />
+                        )
                     })
                 }
             </div>
