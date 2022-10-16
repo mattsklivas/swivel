@@ -16,6 +16,7 @@ export default function ListingComponent(props) {
     const listing = props.listing
     const showCategory = props.showCategory
     const user = props.user
+    const userListings = props.userListings
     let saved = props.saved
     let canOffer = props.canOffer
     
@@ -86,7 +87,7 @@ export default function ListingComponent(props) {
                     </Space>
                 </Space>
             </div>
-            {isModalOpen && <OfferModal hideOfferModal={() => setIsModalOpen(false)}/>}
+            {isModalOpen && <OfferModal hideOfferModal={() => setIsModalOpen(false)} listing={listing} userListings={userListings.filter(item => !listing.offers.includes(item._id))}/>}
         </>
     )
 }

@@ -1,43 +1,60 @@
 // Import React and Antd elements
 import { React, useState } from 'react'
-import { Modal } from 'antd'
+import { Modal, Radio, Space } from 'antd'
 import fetcher from '../../helpers/fetcher'
 
 function OfferModal(props) {
     const [visible, setVisible] = useState(true)
-    const parent = props
+    const userListings = props.userListings
+    const listing = props.listing
 
-    const handleSubmit = async (listing, offer) => {
+    const [value, setValue] = useState(userListings.length !== 0 ? userListings[0]._id : null)
+
+    // Make offer
+    const handleSubmit = async () => {
         await fetcher('api/listing/offer', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                title: listing.title,
-                category: listing.category,
-                description: listing.description,
-                // image: listing.image
+                listing_id: listing._id,
+                offer_id: value
             }),
         })
         .then( () => {
             setVisible(false)
-            parent.hideOfferModal()
+            props.hideOfferModal()
         })
         .catch(() => { 
             setVisible(false)
-            parent.hideOfferModal()
+            props.hideOfferModal()
         })
     }
     
     const handleCancel = () => {
         setVisible(false)
-        parent.hideOfferModal()
+        props.hideOfferModal()
+    }
+
+    // Change selected value
+    const onChange = (e) => {
+        setValue(e.target.value)
     }
 
     return (
-        <Modal className="create-modal" title="Make An Offer" open={visible} onOk={handleSubmit} onCancel={handleCancel}>
-            <div>Content</div>
+        <Modal className="create-modal" title="Make An Offer" open={visible} onOk={handleSubmit} onCancel={handleCancel} okButtonProps={{ disabled: userListings.length === 0 }}>
+            {userListings.length !== 0 ?
+                <Radio.Group onChange={onChange} value={value}>
+                    <Space direction="vertical">
+                        {userListings.map(item => {
+                            return (<Radio value={item._id}>{item.title}</Radio>)
+                        })}
+                    </Space>
+                </Radio.Group>
+                :
+                <div style={{paddingBottom: 20, fontWeight: 400}}>No listings available to place as an offer.</div>
+            }
         </Modal>
     )
 }

@@ -61,11 +61,11 @@ app.prepare().then(() => {
 
     // Include 'user' routes
     const userRoutes = require('./routes/user')
-    server.use('/api/user', jwtCheck, userRoutes(server))
+    server.use('/api/user', userRoutes(server))
 
     // Include 'listing' routes
     const listingRoutes = require('./routes/listing')
-    server.use('/api/listing', jwtCheck, listingRoutes(server))
+    server.use('/api/listing', listingRoutes(server))
 
     // Include route for registration redirect
     const registerRedirect = require('./routes/register')
