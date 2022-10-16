@@ -30,7 +30,7 @@ export default function ListingComponent(props) {
 
     // Add listing to user's saved listings
     const saveListing = async () => {
-        await fetcher(token, props.token, `api/user/save_listing`, {
+        await fetcher(token, `api/user/save_listing`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -41,7 +41,24 @@ export default function ListingComponent(props) {
             }),
         })
         .then( () => {
-            saved.push(listing._id)
+            saved.concat(listing._id)
+        })
+    }
+
+    // Remove listing from user's saved listings
+    const unsaveListing = async () => {
+        await fetcher(token, `api/user/unsave_listing`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: user.nickname,
+                listing_id: listing._id
+            }),
+        })
+        .then( () => {
+            saved = saved.filter(item => item._id !== listing._id)
         })
     }
 
@@ -80,14 +97,20 @@ export default function ListingComponent(props) {
                             }
                             <Space direction="horizontal" size={0} style={{paddingTop: 5}}>
                                 <Button style={{margin: '0 5px 0 0'}} onClick={() => {router.push(`/listing/${listing._id}`)}}>View Listing</Button>
-                                {user.nickname !== listing.creator && <Button style={{margin: '0 5px 0 5px'}} disabled={saved.includes(listing._id)} onClick={saveListing}>Save Listing</Button>}
+                                {user.nickname !== listing.creator ? !saved.reduce((previous, current) => {return previous.concat(current._id)}, []).includes(listing._id) ?
+                                    <Button style={{margin: '0 5px 0 5px'}} onClick={saveListing}>Save Listing</Button>
+                                    :
+                                    <Button style={{margin: '0 5px 0 5px'}} onClick={unsaveListing}>Unsave Listing</Button>
+                                    :
+                                    ''
+                                }
                                 {canOffer && <Button style={{margin: '0 0 0 5px'}} type="primary" onClick={() => setIsModalOpen(true)}>Make Offer</Button>}
                             </Space>
                         </Space>
                     </Space>
                 </Space>
             </div>
-            {isModalOpen && <OfferModal hideOfferModal={() => setIsModalOpen(false)} listing={listing} userListings={userListings.filter(item => !listing.offers.includes(item._id))}/>}
+            {isModalOpen && <OfferModal hideOfferModal={() => setIsModalOpen(false)} listing={listing} userListings={userListings.filter(item => !listing.offers.includes(item._id))} token={token}/>}
         </>
     )
 }

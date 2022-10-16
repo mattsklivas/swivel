@@ -3,7 +3,12 @@ import hookFetcher from '../helpers/hookFetcher'
 
 // Fetch a user's profile details + associated listings
 function useUserDetails(nickname, token) {
-    return useSWR([`/api/user/profile/${nickname}`, token], hookFetcher)
+    return useSWR(() => {
+        if (nickname) {
+            return [`/api/user/profile/${nickname}`, token]
+        }
+        return undefined
+    }, hookFetcher)
 }
 
 // Export the hook

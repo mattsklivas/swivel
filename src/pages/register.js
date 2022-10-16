@@ -19,7 +19,6 @@ function Register({accessToken}) {
 
     // Redirected to this url after registration process
     const redirect = `https://dev-gl5357kx.us.auth0.com/continue?state=${state}`
-    console.log(redirect)
 
     useEffect(() => {
         // Register user in the 

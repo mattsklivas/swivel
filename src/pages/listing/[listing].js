@@ -33,7 +33,7 @@ export default function Listing({accessToken}) {
     const [isModalOpen, setIsModalOpen] = useState(false)
     
     // Get the listing details
-    const { data: listing } = useListing(listingID, token)
+    const { data: listing } = useListing(listingID || '', token)
 
     // Get the logged-in user's listings
     const { data: userListings } = useUserListings(user ? user.nickname : '', token)
@@ -99,6 +99,8 @@ export default function Listing({accessToken}) {
         setShowUpdateModal(true)
     }
 
+    const userListingIDs = userListings ? userListings.reduce((previous, current) => {return previous.concat(current._id)}, []): []
+
     // If the hooks have completed, display the page content
     if (user && initialized) {
         return (
@@ -114,26 +116,26 @@ export default function Listing({accessToken}) {
                         </div>
                         <Space direction="horizontal" align="start">
                             <Space direction="vertical" align="start">
-                                <span style={{fontSize: '25px', fontWeight: 600}}>{listing.title}</span>
+                                <span style={{fontSize: '25px', fontWeight: 600}}>{listing.details.title}</span>
                                 <div style={{fontSize: '14px'}}>
                                 <Space direction="horizontal" align="start">
                                     <FileTextOutlined style={{fontSize: 20}}/>
-                                    <span>{listing.description.length > 340 ? `${listing.description.substring(0, 340)}...` : listing.description}</span>
+                                    <span>{listing.details.description.length > 340 ? `${listing.details.description.substring(0, 340)}...` : listing.details.description}</span>
                                 </Space>
                                 </div>
-                                <div style={{fontSize: '14px', cursor: 'pointer'}} onClick={() => {router.push(`/profile/${listing.creator}`)}}>
+                                <div style={{fontSize: '14px', cursor: 'pointer'}} onClick={() => {router.push(`/profile/${listing.details.creator}`)}}>
                                     <UserOutlined style={{fontSize: 20}}/>
-                                    <span style={{paddingLeft: 5}}>{`${listing.creator}`}</span>
+                                    <span style={{paddingLeft: 5}}>{`${listing.details.creator}`}</span>
                                 </div>
                                 <div style={{fontSize: '14px'}}>
                                     <CalendarOutlined style={{fontSize: 20}}/>
-                                    <span style={{paddingLeft: 5}}>{`${listing.date_created.split('T')[0]}`}</span>
+                                    <span style={{paddingLeft: 5}}>{`${listing.details.date_created.split('T')[0]}`}</span>
                                 </div>
                                 <div style={{fontSize: '14px'}}>
                                     <AppstoreOutlined style={{fontSize: 20}}/>
-                                    <span style={{paddingLeft: 5}}>{CATEGORIES[listing.category]}</span>
+                                    <span style={{paddingLeft: 5}}>{CATEGORIES[listing.details.category]}</span>
                                 </div>
-                                { listing.creator === user.nickname &&
+                                { listing.details.creator === user.nickname &&
                                     <Space direction="horizontal" align="start">
                                         <Button onClick={handleShowUpdateModal}>Modify</Button>
                                         <Popconfirm
@@ -167,11 +169,17 @@ export default function Listing({accessToken}) {
                                 ),
                                 key: id,
                                 children: (
-                                    <ListComponent listings={!i ? listing.offers : listing.myOffers} category="all" user={user} userListings={userListings} saved={userDetails.details.saved} token={token} canOffer/>
+                                    <ListComponent 
+                                        listings={!i ? listing.offers : listing.offers.reduce((previous, current) => {return userListingIDs.includes(current._id) ? previous.concat(current) : previous}, [])} 
+                                        category="all" user={user} userListings={userListings} 
+                                        saved={userDetails.saved} 
+                                        token={token} 
+                                        canOffer
+                                    />
                                 ),
                             }
                         })} />
-                    { showUpdateModal && <EditListingModal hideModal={() => {setShowUpdateModal(false)}} listing={listing} token={token} />}
+                    { showUpdateModal && <EditListingModal hideModal={() => {setShowUpdateModal(false)}} listing={listing.details} token={token} />}
                 </div>
                 <div style={{height: 30}}/>
             </>

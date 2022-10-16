@@ -9,6 +9,7 @@ const ListingModel = require('../definitions/listing')
 const UserModel = require('../definitions/user')
 
 function routes(app) {
+    console.log('ok')
     // Return all listings
     router.get('/all', async (req, res) => {
         try {
@@ -25,8 +26,9 @@ function routes(app) {
     router.get('/:listingID', async (req, res) => {
         try {
             // Fetch one listing in the database
-            const listing = await ListingModel.findById(req.params.listingID)    
-            res.status(200).json(listing)
+            const listing = await ListingModel.findById(req.params.listingID)
+            const offers = await ListingModel.find({_id: listing.offers}) 
+            res.status(200).json({details: listing, offers: offers})
         } catch (err) {
             // Return error 500 if an internal server error occurred
             res.status(500).json({ message: err.message })
@@ -37,7 +39,7 @@ function routes(app) {
     // param: creator 
     router.get('/byUser/:creator', async (req, res) => {
         try {
-            const retrievedListing = await ListingModel.find({ creator: req.params.creator })      
+            const retrievedListing = await ListingModel.find({ creator: req.params.creator })   
             res.status(200).json(retrievedListing)
         } catch (err) {
             // Return error 500 if an internal server error occurred
@@ -78,27 +80,28 @@ function routes(app) {
     })
 
     // Add an offer to a listing
-    // param: listingID is the current listing to add offers to
-    // body: offer is the listing ID as a string
-    // TODO: Need to review and test (Matt)
-    router.patch('/offer/:listingID', async(req, res) => {
+    // body: listing_id is the current listing to add offers to, offer_id is the listing ID as a string
+    router.put('/offer', async(req, res) => {
+        console.log('ok')
         try {
-            // Get the string of the offer id from the body 
-            const offerArrayNew = req.body.offer
-            // Get current offerings
-            const offerArray = await ListingModel.find({_id: req.params.listingID}).select('offers')
-            // check if new offering exist in the current offering
-            if(!offerArray[0].offers.includes(offerArrayNew)){
+            console.log('ok')
+            // Get current offers
+            const offerArray = await ListingModel.find({_id: req.body.listing_id}).select('offers')
+            // Check if new offer exist in the current offer
+            if(!offerArray[0].offers.includes(req.body.offer_id)){
                 // Add the new offers
-                offerArray[0].offers.push(offerArrayNew)
+                offerArray[0].offers.push(req.body.offer_id)
             }
+
+            console.log(offerArray[0])
 
             // Update offer with new listings
             const updateListing = await ListingModel.updateOne(
-                {_id: req.params.listingID}, 
+                {_id: req.body.listing_id}, 
                 {$set: {offers: offerArray[0].offers}})                             
             res.status(200).json(updateListing)      
         }catch(err){
+            console.log(err)
             res.status(500).json({message: err})
         }
     })
