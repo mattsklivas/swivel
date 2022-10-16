@@ -1,6 +1,5 @@
 // Import React
 import { React, useEffect } from 'react'
-import { useUser } from '@auth0/nextjs-auth0'
 import { useRouter } from 'next/router'
 import auth0 from '../../auth/auth0'
 import LoadingComponent from '../components/LoadingComponent'
@@ -51,8 +50,6 @@ export const getServerSideProps = async (context) => {
     if (accessToken != null) {
         accessToken = accessToken.idToken
     }
-
-    console.log(accessToken)
 
     // Pass data to the page via props
     return { props: {accessToken} }
