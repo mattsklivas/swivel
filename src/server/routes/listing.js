@@ -5,6 +5,8 @@ const router = express.Router()
 
 // Import the Listing data model
 const ListingModel = require('../definitions/listing')
+// Import the User data model
+const UserModel = require('../definitions/user')
 
 function routes(app) {
     // Return all listings
@@ -60,6 +62,7 @@ function routes(app) {
     })
 
     // Update a listing
+    // listingID is the id to be updated
     router.patch('/:listingID', async(req, res) => {
         try {
             const updateListing = await ListingModel.updateOne(
@@ -73,9 +76,39 @@ function routes(app) {
     })
 
     // Delete one listing
+    // listingID is the id to be delete
     router.delete('/:listingID', async(req, res) => {
         try {
-            const removeListing = await ListingModel.remove({_id: req.params.listingID})
+            // Delete the record
+            const removeListing = await ListingModel.deleteOne({_id: req.params.listingID})
+
+            // Delete all reference to the deleted offer in all other listing
+            const listings = await ListingModel.find()
+            listings.forEach(async element => {
+                // Check if the deleted offer exist in the offers
+                if(element.offers.includes(req.params.listingID)){
+                    // Filter out the deleted offer
+                    const newListing = element.offers.filter(item => item !== req.params.listingID)
+                    // update the offer list
+                    await ListingModel.updateOne(
+                        {_id: element._id}, 
+                        {$set: {offers: newListing}})
+                }                 
+            })
+
+            // Delete all reference to the deleted offer in the saved_listing in user's record
+            const userRecords = await UserModel.find()
+            userRecords.forEach(async user => {               
+                // Check if the deleted offer exist in the offers
+                if(user.saved_listings.includes(req.params.listingID)){
+                    // Filter out the deleted offer
+                    const newSavedListing = user.saved_listings.filter(item => item !== req.params.listingID)
+                    // update the offer list
+                    await UserModel.updateOne(
+                        {_id: user._id}, 
+                        {$set: {saved_listings: newSavedListing}})
+                }                 
+            })
             res.status(200).json(removeListing)
         } catch(err) {
             res.status(500).json({message: err})
@@ -83,20 +116,18 @@ function routes(app) {
     })
 
     // Add an offer to a listing
+    // listingID is the current listing to add offers
+    // body=> offer: ID string
     // TODO: Need to review and test (Matt)
     router.patch('/offer/:listingID', async(req, res) => {
         try {
-            // Get the string of ids from the body and split by ',' into an array
-            const offerArrayNew = req.body.id.split(',')
+            // Get the string of the offer id from the body 
+            const offerArrayNew = req.body.offer
             // Get current offerings
             const offerArray = await ListingModel.find({_id: req.params.listingID}).select('offers')
-            
-            // Loop through each of the new offering
-            for(let i = 0; i < offerArrayNew.length; i+=1){
-                // check if new offering exist in the current offering
-                if(!offerArray[0].offers.includes(offerArrayNew[i])){
-                    offerArray[0].offers.push(offerArrayNew[i])
-                }
+            // check if new offering exist in the current offering
+            if(!offerArray[0].offers.includes(offerArrayNew)){
+                offerArray[0].offers.push(offerArrayNew)
             }
 
             // Update offer with new listings
