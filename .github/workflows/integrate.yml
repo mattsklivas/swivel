@@ -9,7 +9,7 @@ jobs:
   test_push_request:
     runs-on: ubuntu-latest
     env:
-      IMAGENAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_APP_NAME }}
+      IMAGENAME: gcr.io/ab/swivel
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
