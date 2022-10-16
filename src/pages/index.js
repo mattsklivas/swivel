@@ -10,6 +10,7 @@ import HeaderComponent from '../components/HeaderComponent'
 import ListComponent from '../components/ListComponent'
 import useListingsAll from '../hooks/useListingsAll'
 import useUserListings from '../hooks/useUserListings'
+import useUserDetails from '../hooks/useUserDetails'
 
 // Global categories object
 const CATEGORIES = {
@@ -32,12 +33,16 @@ export default function Home({accessToken}) {
 
     // Get the logged-in user's listings
     const { data: userListings } = useUserListings(user ? user.nickname : null, token)
+
+    // Get the logged-in user's details
+    const { data: userDetails } = useUserDetails(user ? user.nickname : '', token)
     
     // Flag to check if hooks have completed
     const [initialized, setInitialized] = useState(false)
 
+    // Wait for state variable initialization to show the page content
     useEffect(() => {
-        if (!initialized && typeof listings !== 'undefined' && typeof userListings !== 'undefined' && !isLoading) {
+        if (!initialized && typeof listings !== 'undefined' && typeof userListings !== 'undefined' && typeof userDetails !== 'undefined' && !isLoading) {
             setInitialized(true)
         }
     })
@@ -62,7 +67,7 @@ export default function Home({accessToken}) {
                                 ),
                                 key: id,
                                 children: (
-                                    <ListComponent listings={listings} category={categoryKey} user={user} userListings={userListings} canOffer/>
+                                    <ListComponent listings={listings} category={categoryKey} user={user} userListings={userListings} saved={userDetails.saved} token={token} canOffer/>
                                 ),
                             }
                         })} />

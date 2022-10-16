@@ -6,13 +6,15 @@ import { Row } from 'antd'
 import { InboxOutlined } from '@ant-design/icons'
 // import LoadingComponent from './LoadingComponent'
 import ListingComponent from './ListingComponent'
-import '../hooks/useUserDetails'
 
 export default function ListComponent(props) {
     let listings = props.listings
     const category = props.category
     const user = props.user
+    const saved = props.saved
+    const userListings = props.userListings
     const canOffer = props.canOffer
+    const token = props.token
 
     if (category !== 'all' && listings && listings.length > 0) {
         listings = props.listings.filter(listing => listing.category === category)
@@ -24,12 +26,12 @@ export default function ListComponent(props) {
                 {category !== 'all' ? 
                     listings.map((listing, i) => {
                         return (
-                            <ListingComponent key={i} listing={listing} showCategory={false} user={user} canOffer={canOffer}/>
+                            <ListingComponent key={i} listing={listing} showCategory={false} user={user} saved={saved} userListings={userListings} canOffer={canOffer} token={token}/>
                         )
                     })
                     :
                     listings.map((listing, i) => {
-                        return (<ListingComponent key={i} listing={listing} showCategory={true} user={user} canOffer={canOffer}/>)
+                        return (<ListingComponent key={i} listing={listing} showCategory={true} user={user} saved={saved} userListings={userListings} canOffer={canOffer} token={token}/>)
                     })
                 }
             </div>

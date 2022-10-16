@@ -49,40 +49,6 @@ function routes(app) {
         }
     })
 
-    // Register user
-    router.post('/register', async (req, res) => {
-        try {
-             // Check if username already exists, return 409 if so
-            const existsUser = await UserModel.findOne({ username: req.body.username })
-            const existsEmail = await UserModel.findOne({ email: req.body.email })
-
-            if (existsUser) {
-                return res.status(409).json({
-                    message: 'An account with the username provided already exists',
-                })
-            }else if (existsEmail) {
-                return res.status(409).json({
-                    message: 'An account with the email provided already exists',
-                })
-            }else{
-                // Build the user model and save it to the db
-                const user = new UserModel({
-                    email: req.body.email,
-                    username: req.body.username,
-                    fname: '',
-                    lname: '',
-                    location: '',
-                    description: '',
-                    avatar: ''
-                })
-                user.save().then(data=> {res.json(data)}).catch(err => {res.json({message: err.message})})
-            }
-        } catch (err) {
-            // Return error 500 if an internal server error occurred
-            res.status(500).json({ message: err.message })
-        }
-    })
-
     // Add saved listing to user
     // param: username is the user to add the saved_listing to
     // body: listingID is the listing as a ID string 

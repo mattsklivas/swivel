@@ -12,10 +12,11 @@ import auth0 from '../../../auth/auth0'
 import LoadingComponent from '../../components/LoadingComponent'
 import HeaderComponent from '../../components/HeaderComponent'
 // import OfferModal from '../../components/OfferModal'
-// import UpdateListingModal from '../../components/UpdateListingModal'
+import EditListingModal from '../../components/modals/EditListingModal'
 import ListComponent from '../../components/ListComponent'
 import useListing from '../../hooks/useListing'
 import useUserListings from '../../hooks/useUserListings'
+import useUserDetails from '../../hooks/useUserDetails'
 import fetcher from '../../helpers/fetcher'
 import { CATEGORIES } from '../../helpers/categories'
 
@@ -37,12 +38,21 @@ export default function Listing({accessToken}) {
     // Get the logged-in user's listings
     const { data: userListings } = useUserListings(user ? user.nickname : '', token)
 
+    // Get the logged-in user's details
+    const { data: userDetails } = useUserDetails(user ? user.nickname : '', token)
+
     // Flag to check if hooks have completed
     const [initialized, setInitialized] = useState(false)
 
+    // Wait for state variable initialization to show the page content
     useEffect(() => {
-        if (!initialized && typeof listing !== 'undefined' && typeof userListings !== 'undefined' && !isLoading) {
-            setInitialized(true)
+        if (!initialized && typeof listing !== 'undefined' && typeof userListings !== 'undefined' && typeof userDetails !== 'undefined' && !isLoading) {
+            if (listing == null) {
+                // Redirect for unknown listing
+                router.push('/')
+            } else {
+                setInitialized(true)
+            }
         }
     })
 
@@ -133,7 +143,7 @@ export default function Listing({accessToken}) {
                                             okButtonProps={{ loading: confirmLoading }}
                                             onCancel={handleCancel}
                                         >
-                                            <Button danger type="primary" onClick={showDeleteConfirm}>Delete</Button>
+                                            <Button danger type="primary" onClick={showDeleteConfirm} loading={confirmLoading}>Delete</Button>
                                         </Popconfirm>
                                     </Space>
                                 }
@@ -157,11 +167,11 @@ export default function Listing({accessToken}) {
                                 ),
                                 key: id,
                                 children: (
-                                    <ListComponent listings={!i ? listing.offers : listing.myOffers} category="all" user={user} userListings={userListings} canOffer/>
+                                    <ListComponent listings={!i ? listing.offers : listing.myOffers} category="all" user={user} userListings={userListings} saved={userDetails.details.saved} token={token} canOffer/>
                                 ),
                             }
                         })} />
-                    {/* { isModalOpen && <OfferModal hideModal={() => {setIsModalOpen(false)}} listing={listing} userListings={userListings} />} */}
+                    { showUpdateModal && <EditListingModal hideModal={() => {setShowUpdateModal(false)}} listing={listing} token={token} />}
                 </div>
                 <div style={{height: 30}}/>
             </>
