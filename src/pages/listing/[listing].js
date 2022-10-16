@@ -44,6 +44,7 @@ export default function Listing({accessToken}) {
     // Flag to check if hooks have completed
     const [initialized, setInitialized] = useState(false)
 
+    // Wait for state variable initialization to show the page content
     useEffect(() => {
         if (!initialized && typeof listing !== 'undefined' && typeof userListings !== 'undefined' && typeof userDetails !== 'undefined' && !isLoading) {
             if (listing == null) {
@@ -166,7 +167,7 @@ export default function Listing({accessToken}) {
                                 ),
                                 key: id,
                                 children: (
-                                    <ListComponent listings={!i ? listing.offers : listing.myOffers} category="all" user={user} userListings={userListings} saved={userDetails.details.saved_listings} token={token} canOffer/>
+                                    <ListComponent listings={!i ? listing.offers : listing.myOffers} category="all" user={user} userListings={userListings} saved={userDetails.details.saved} token={token} canOffer/>
                                 ),
                             }
                         })} />

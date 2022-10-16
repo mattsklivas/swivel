@@ -36,11 +36,12 @@ export default function Profile({accessToken}) {
     // Flag to check if hooks have completed
     const [initialized, setInitialized] = useState(false)
 
+    // Wait for state variable initialization to show the page content
     useEffect(() => {
         // Redirect for unknown user
         if (userDetailsError) {
             router.push('/')
-        } else if (!initialized && typeof userDetails !== 'undefined' && typeof userListings !== 'undefined' && userDetailsLoggedIn !== 'undefined' && !isLoading) {
+        } else if (!initialized && typeof userDetails !== 'undefined' && typeof userListings !== 'undefined' && typeof userDetailsLoggedIn !== 'undefined' && !isLoading) {
             setInitialized(true)
         }
     })
@@ -88,7 +89,7 @@ export default function Profile({accessToken}) {
                                 ),
                                 key: id,
                                 children: (
-                                    <ListComponent listings={i ? userDetails.saved : userDetails.listings} category="all" user={user} saved={userDetailsLoggedIn.details.saved_listings} userListings={userListings} token={token} canOffer={false} />
+                                    <ListComponent listings={i ? userDetails.saved : userDetails.listings} category="all" user={user} saved={userDetailsLoggedIn.details.saved} userListings={userListings} token={token} canOffer={false} />
                                 ),
                             }
                         })} />
