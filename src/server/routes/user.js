@@ -72,6 +72,20 @@ function routes(app) {
         }
     })
 
+    // Unsave a listing
+    // body: username is the user for which to remove the saved listing, listing_id is the offer ID (string) to be removed
+    router.patch('/unsave_listing', async(req,res) => {
+        try{
+            // $pullAll removes all instance of the value from the array
+            const updateSavedListing = await UserModel.updateOne(
+                {username: req.body.username}, 
+                {$pullAll: {saved_listings: [req.body.listing_id]}})
+            res.status(200).json(updateSavedListing)
+        }catch(err){
+            res.status(500).json({message: err})
+        }
+    })
+
     return router
 }
 
