@@ -24,7 +24,7 @@ const jwtCheck = expressJwt({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: `${AUTH0_ISSUER_BASE_URL}.well-known/jwks.json`
+        jwksUri: 'https://dev-gl5357kx.us.auth0.com/.well-known/jwks.json'
         }),
         audience: AUTH0_AUD,
         issuer: AUTH0_ISSUER_BASE_URL,
@@ -66,13 +66,19 @@ app.prepare().then(() => {
     // Include 'listing' routes
     const listingRoutes = require('./routes/listing')
     server.use('/api/listing', jwtCheck, listingRoutes(server))
+
+    // Include route for registration redirect
+    const registerRedirect = require('./routes/register')
+    server.use('/api/register', registerRedirect(server))
     
     // Obtain any route and handle the request
     server.get('*', (req, res) => handle(req, res))
 
+    // Error handling
     server.use((err, req, res, _next) => {
         res.status(err.status).json(err)
     })
+
     // Listen on the provided port
     server.listen(PORT, err => {
         if (err) {

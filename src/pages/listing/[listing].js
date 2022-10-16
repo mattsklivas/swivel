@@ -12,7 +12,7 @@ import auth0 from '../../../auth/auth0'
 import LoadingComponent from '../../components/LoadingComponent'
 import HeaderComponent from '../../components/HeaderComponent'
 // import OfferModal from '../../components/OfferModal'
-// import UpdateListingModal from '../../components/UpdateListingModal'
+import EditListingModal from '../../components/modals/EditListingModal'
 import ListComponent from '../../components/ListComponent'
 import useListing from '../../hooks/useListing'
 import useUserListings from '../../hooks/useUserListings'
@@ -133,7 +133,7 @@ export default function Listing({accessToken}) {
                                             okButtonProps={{ loading: confirmLoading }}
                                             onCancel={handleCancel}
                                         >
-                                            <Button danger type="primary" onClick={showDeleteConfirm}>Delete</Button>
+                                            <Button danger type="primary" onClick={showDeleteConfirm} loading={confirmLoading}>Delete</Button>
                                         </Popconfirm>
                                     </Space>
                                 }
@@ -161,7 +161,7 @@ export default function Listing({accessToken}) {
                                 ),
                             }
                         })} />
-                    {/* { isModalOpen && <OfferModal hideModal={() => {setIsModalOpen(false)}} listing={listing} userListings={userListings} />} */}
+                    { showUpdateModal && <EditListingModal hideModal={() => {setShowUpdateModal(false)}} listing={listing} token={token} />}
                 </div>
                 <div style={{height: 30}}/>
             </>
