@@ -34,7 +34,7 @@ export default function Profile({accessToken}) {
     const [initialized, setInitialized] = useState(false)
 
     useEffect(() => {
-        if (!initialized && userDetails !== 'undefined' && userListings !== 'undefined' && !isLoading) {
+        if (!initialized && typeof userDetails !== 'undefined' && typeof userListings !== 'undefined' && !isLoading) {
             setInitialized(true)
         }
     })
@@ -54,15 +54,15 @@ export default function Profile({accessToken}) {
                         </div>
                         <Space direction="horizontal" align="start">
                             <Space direction="vertical" align="start">
-                                <span style={{fontSize: '25px', fontWeight: 600}}>{`${userDetails.username}'s Profile`}</span>
-                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Name: </span><span style={{fontWeight: 400}}>{userDetails.fname && userDetails.lname ? `${userDetails.fname} ${userDetails.lname}` : 'Not Available'}</span></span>
-                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Email: </span><span style={{fontWeight: 400}}>{`${userDetails.email || 'Not available' }`}</span></span>
-                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Location: </span><span style={{fontWeight: 400}}>{`${userDetails.location || 'Not available' }`}</span></span>
-                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Bio: </span><span style={{fontWeight: 400}}>{`${userDetails.description || 'Not available' }`}</span></span>  
+                                <span style={{fontSize: '25px', fontWeight: 600}}>{`${userDetails.details.username}'s Profile`}</span>
+                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Name: </span><span style={{fontWeight: 400}}>{userDetails.details.fname && userDetails.details.lname ? `${userDetails.details.fname} ${userDetails.details.lname}` : 'Not Available'}</span></span>
+                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Email: </span><span style={{fontWeight: 400}}>{`${userDetails.details.email || 'Not available' }`}</span></span>
+                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Location: </span><span style={{fontWeight: 400}}>{`${userDetails.details.location || 'Not available' }`}</span></span>
+                                <span style={{fontSize: '17px'}}><span style={{fontWeight: 500}}>Bio: </span><span style={{fontWeight: 400}}>{`${userDetails.details.description || 'Not available' }`}</span></span>  
                             </Space>
                         </Space>
                     </Space>
-                    { userDetails.username === user.nickname &&
+                    { userDetails.details.username === user.nickname &&
                         <Button style={{position: 'absolute', right: '80px', top: '100px'}} type="primary" onClick={() => setIsModalOpen(true)}>Edit Profile</Button>
                     }
                     <Tabs
@@ -86,7 +86,7 @@ export default function Profile({accessToken}) {
                                 ),
                             }
                         })} />
-                    { isModalOpen && <EditProfileModal hideModal={() => {setIsModalOpen(false)}} user={user} userDetails={userDetails} />}
+                    { isModalOpen && <EditProfileModal hideModal={() => {setIsModalOpen(false)}} user={user} token={token} userDetails={userDetails.details}/>}
                 </div>
                 <div style={{height: 30}}/>
             </>

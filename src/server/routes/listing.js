@@ -31,7 +31,6 @@ function routes(app) {
     })
 
     // Return all the listings from a user
-    // TODO: test
     router.get('/byUser/:creator', async (req, res) => {
         try {
             const retrievedListing = await ListingModel.find({ creator: req.params.creator })      
@@ -68,6 +67,17 @@ function routes(app) {
                 {$set: {title: req.body.title, category: req.body.category, description: req.body.description}}
             )
             res.status(200).json(updateListing)
+        } catch(err) {
+            res.status(500).json({message: err})
+        }
+    })
+
+    // Delete one listing
+    router.delete('/:listingID', async(req, res) => {
+        try {
+            console.log('delete')
+            const removeListing = await ListingModel.remove({_id: req.params.listingID})
+            res.status(200).json(removeListing)
         } catch(err) {
             res.status(500).json({message: err})
         }
@@ -111,16 +121,6 @@ function routes(app) {
                 {$pullAll: {offers: removeOfferArray}})
             res.status(200).json(updateListing)
         }catch(err){
-            res.status(500).json({message: err})
-        }
-    })
-
-    // Delete one listing
-    router.delete('/delete/:listingID', async(req, res) => {
-        try {
-            const removeListing = await ListingModel.remove({_id: req.params.listingID})
-            res.status(200).json(removeListing)
-        } catch(err) {
             res.status(500).json({message: err})
         }
     })

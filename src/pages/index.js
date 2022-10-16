@@ -37,7 +37,7 @@ export default function Home({accessToken}) {
     const [initialized, setInitialized] = useState(false)
 
     useEffect(() => {
-        if (!initialized && listings !== 'undefined' && userListings !== 'undefined' && !isLoading) {
+        if (!initialized && typeof listings !== 'undefined' && typeof userListings !== 'undefined' && !isLoading) {
             setInitialized(true)
         }
     })

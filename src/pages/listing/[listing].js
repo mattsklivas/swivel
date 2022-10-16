@@ -41,7 +41,7 @@ export default function Listing({accessToken}) {
     const [initialized, setInitialized] = useState(false)
 
     useEffect(() => {
-        if (!initialized && listing !== 'undefined' && userListings !== 'undefined' && !isLoading) {
+        if (!initialized && typeof listing !== 'undefined' && typeof userListings !== 'undefined' && !isLoading) {
             setInitialized(true)
         }
     })
@@ -59,17 +59,11 @@ export default function Listing({accessToken}) {
     }
 
     // Handle delete confirmation
-    const handleOk = async () => {
+    const handleDelete = async () => {
         setConfirmLoading(true)
         
-        await fetcher('api/listing', {
+        await fetcher(token, `api/listing/${listingID}`, {
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: listing._id
-            }),
         })
         .then( () => {
             setOpenConfirm(false)
@@ -135,7 +129,7 @@ export default function Listing({accessToken}) {
                                         <Popconfirm
                                             title="Are you sure you wish to delete this listing?"
                                             open={openConfirm}
-                                            onConfirm={handleOk}
+                                            onConfirm={handleDelete}
                                             okButtonProps={{ loading: confirmLoading }}
                                             onCancel={handleCancel}
                                         >

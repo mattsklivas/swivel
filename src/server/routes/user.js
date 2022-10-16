@@ -13,30 +13,28 @@ function routes(app) {
     // Get the profile details of a specific user
     router.get('/profile/:nickname', async (req, res) => {
         try {
-            let user = await UserModel.findOne({ username: req.params.nickname})
-            const userListings = await ListingModel.find({
+            const user = await UserModel.findOne({ username: req.params.nickname})
+            const listings = await ListingModel.find({
                 creator: req.params.nickname
             })
-            const saved_listings = await ListingModel.find({_id: user.saved_listings})
-            
-            user.saved = saved_listings
-            user.listings = userListings
-            res.status(200).json(user)
+            const saved = await ListingModel.find({_id: user.saved_listings})
+
+            res.status(200).json({details: user, listings: listings, saved: saved})
         } catch (err) {
         res.status(500).json({ message: err.message })
         }
     })
 
     // Update a user's profile details
-    router.patch('/profile/:nickname', async(req, res) =>{
-        try{
+    router.patch('/profile/:nickname', async(req, res) => {
+        try {
             // Update one
             const updatedUser = await UserModel.updateOne(
-                {username: req.params.UserID}, 
+                {username: req.params.nickname}, 
                 {$set: {location: req.body.location, fname: req.body.fname, lname: req.body.lname, description: req.body.description}}
             )
             res.status(200).json(updatedUser)
-        }catch(err){
+        } catch(err) {
             res.status(500).json({ message: err.message })
         }
     })

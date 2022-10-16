@@ -6,7 +6,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import fetcher from '../../helpers/fetcher'
 import LoadingComponent from '../LoadingComponent'
 
-function CreateModal(props) {
+function EditProfileModal(props) {
     const router = useRouter()
     const [form] = Form.useForm()
     const [visible, setVisible] = useState(true)
@@ -14,23 +14,23 @@ function CreateModal(props) {
     const userDetails = props.userDetails
 
     const handleSubmit = async (formData) => {
-        await fetcher(`api/user/profile/${nickname}`, {
+        await fetcher(props.token, `api/user/profile/${nickname}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                fname: formData.fname,
-                lname: formData.lname,
-                location: formData.location,
-                description: formData.description,
+                fname: formData.fname || '',
+                lname: formData.lname || '',
+                location: formData.location || '',
+                description: formData.description || '',
                 // avatar: formData.avatar
             }),
         })
         .then( () => {
             setVisible(false)
             props.hideModal()
-            router.push(`/profile/${nickname}`)
+            router.reload(window.location.pathname)
         })
         .catch(() => { 
             setVisible(false)
@@ -82,4 +82,4 @@ function CreateModal(props) {
     )
 }
 
-export default CreateModal
+export default EditProfileModal 
