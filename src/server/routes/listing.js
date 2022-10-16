@@ -20,11 +20,12 @@ function routes(app) {
     })
 
     // Return one listing and the listing's offers
+    // param: listingID is the records to be returned
     // TODO: include listing offers as well
-    router.get('/:id', async (req, res) => {
+    router.get('/:listingID', async (req, res) => {
         try {
             // Fetch one listing in the database
-            const listing = await ListingModel.findById(req.params.id)    
+            const listing = await ListingModel.findById(req.params.listingID)    
             res.status(200).json(listing)
         } catch (err) {
             // Return error 500 if an internal server error occurred
@@ -32,7 +33,8 @@ function routes(app) {
         }
     })
 
-    // Return all the listings from a user
+    // Return all the listings from a user(creator)
+    // param: creator 
     router.get('/byUser/:creator', async (req, res) => {
         try {
             const retrievedListing = await ListingModel.find({ creator: req.params.creator })      
@@ -62,7 +64,7 @@ function routes(app) {
     })
 
     // Update a listing
-    // listingID is the id to be updated
+    // param: listingID is the record to be updated
     router.patch('/:listingID', async(req, res) => {
         try {
             const updateListing = await ListingModel.updateOne(
@@ -75,8 +77,63 @@ function routes(app) {
         }
     })
 
+    // Add an offer to a listing
+    // param: listingID is the current listing to add offers to
+    // body: offer is the listing ID as a string
+    // TODO: Need to review and test (Matt)
+    router.patch('/offer/:listingID', async(req, res) => {
+        try {
+            // Get the string of the offer id from the body 
+            const offerArrayNew = req.body.offer
+            // Get current offerings
+            const offerArray = await ListingModel.find({_id: req.params.listingID}).select('offers')
+            // check if new offering exist in the current offering
+            if(!offerArray[0].offers.includes(offerArrayNew)){
+                // Add the new offers
+                offerArray[0].offers.push(offerArrayNew)
+            }
+
+            // Update offer with new listings
+            const updateListing = await ListingModel.updateOne(
+                {_id: req.params.listingID}, 
+                {$set: {offers: offerArray[0].offers}})                             
+            res.status(200).json(updateListing)      
+        }catch(err){
+            res.status(500).json({message: err})
+        }
+    })
+
+    // Remove offers from a listing
+    router.patch('/deleteOffer/:listingID', async(req,res) => {
+        try{
+            // Get the string of ids from the body and split by ',' into an array
+            const removeOfferArray = req.body.id.split(',')
+
+            const updateListing = await ListingModel.updateOne(
+                {_id: req.params.listingID}, 
+                {$pullAll: {offers: removeOfferArray}})
+            res.status(200).json(updateListing)
+        }catch(err){
+            res.status(500).json({message: err})
+        }
+    })
+
+    // Update the listing with an accepted offer
+    // param: listingID is the current listing to add accepted offer to
+    // body: acceptedOffer is the listing ID as a string
+    router.patch('/acceptOffer/:listingID', async(req, res) => {
+        try {
+            const updateListing = await ListingModel.updateOne(
+                {_id: req.params.listingID}, 
+                {$set: {accepted: req.body.acceptedOffer}})                             
+            res.status(200).json(updateListing)      
+        }catch(err){
+            res.status(500).json({message: err})
+        }
+    })
+
     // Delete one listing
-    // listingID is the id to be delete
+    // param: listingID is the records to be deleted
     router.delete('/:listingID', async(req, res) => {
         try {
             // Delete the record
@@ -111,46 +168,6 @@ function routes(app) {
             })
             res.status(200).json(removeListing)
         } catch(err) {
-            res.status(500).json({message: err})
-        }
-    })
-
-    // Add an offer to a listing
-    // listingID is the current listing to add offers
-    // body=> offer: ID string
-    // TODO: Need to review and test (Matt)
-    router.patch('/offer/:listingID', async(req, res) => {
-        try {
-            // Get the string of the offer id from the body 
-            const offerArrayNew = req.body.offer
-            // Get current offerings
-            const offerArray = await ListingModel.find({_id: req.params.listingID}).select('offers')
-            // check if new offering exist in the current offering
-            if(!offerArray[0].offers.includes(offerArrayNew)){
-                offerArray[0].offers.push(offerArrayNew)
-            }
-
-            // Update offer with new listings
-            const updateListing = await ListingModel.updateOne(
-                {_id: req.params.listingID}, 
-                {$set: {offers: offerArray[0].offers}})                             
-            res.status(200).json(updateListing)      
-        }catch(err){
-            res.status(500).json({message: err})
-        }
-    })
-
-    // Remove offers from a listing
-    router.patch('/deleteOffer/:listingID', async(req,res) => {
-        try{
-            // Get the string of ids from the body and split by ',' into an array
-            const removeOfferArray = req.body.id.split(',')
-
-            const updateListing = await ListingModel.updateOne(
-                {_id: req.params.listingID}, 
-                {$pullAll: {offers: removeOfferArray}})
-            res.status(200).json(updateListing)
-        }catch(err){
             res.status(500).json({message: err})
         }
     })
