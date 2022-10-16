@@ -19,35 +19,8 @@ jobs:
         # add test
       - run: yarn build
 
-      - uses: mr-smithers-excellent/docker-build-push@v5
-        name: Docker image Build & push
-        with:
-          image: tarune/sample
-          registry: docker.io
-          tag: latest 
-          #image name is branch/tag
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Login to google cloud
-        uses: google-github-actions/setup-gcloud@v0
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_email: ${{ secrets.GCP_EMAIL }}
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-    
-      - name: docker config for deployment
-        run: gcloud auth configure-docker --quiet
-
       - name: docker image build for deployment
         run: docker build . -t $IMAGENAME
-
-      - name: docker image push for deployment
-        run: docker push $IMAGENAME
-
-        #deploy to google cloud
-      - name: Deploy image to cloud
-        run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image $IMAGENAME --region {region} --platform managed
 
       #from docker hub, push the image to google conatiner registry, and deploy from there. 
 
