@@ -3,7 +3,7 @@ FROM node:latest
 #go to working directory in container
 WORKDIR /usr/src/app
 #add package.json and yarn lock to directory
-COPY package.json yarn.lock ./
+COPY package.json ./
 #install dependencies
 RUN yarn install
 #copy files to container
@@ -12,3 +12,5 @@ COPY . .
 EXPOSE 3000
 #perform command to run app 
 CMD ["yarn", "dev-server"]
+
+
