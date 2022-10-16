@@ -2,12 +2,14 @@ name: swivel CI testing
 
 on:
   push:
-    branches: [ tarun ]
+    branches: [ pipeline ]
 
 
 jobs:
   test_push_request:
     runs-on: ubuntu-latest
+    env:
+      IMAGENAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_APP_NAME }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -27,5 +29,27 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-#next step take the docker image from hub and deploy on google cloud
+      - name: Login to google cloud
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_email: ${{ secrets.GCP_EMAIL }}
+          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+    
+      - name: docker config for deployment
+        run: gcloud auth configure-docker --quiet
+
+      - name: docker image build for deployment
+        run: docker build . -t $IMAGENAME
+
+      - name: docker image push for deployment
+        run: docker push $IMAGENAME
+
+        #deploy to google cloud
+      - name: Deploy image to cloud
+        run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image $IMAGENAME --region {region} --platform managed
+
+      #from docker hub, push the image to google conatiner registry, and deploy from there. 
+
+
 # source : https://github.com/mr-smithers-excellent/docker-build-push
