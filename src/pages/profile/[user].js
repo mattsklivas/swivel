@@ -25,7 +25,10 @@ export default function Profile({accessToken}) {
     const [isModalOpen, setIsModalOpen] = useState(false)
     
     // Get the user's details
-    const { data: userDetails } = useUserDetails(profileID, token)
+    const { data: userDetails, error: userDetailsError } = useUserDetails(profileID, token)
+
+    // Get the logged in user's details
+    const { data: userDetailsLoggedIn } = useUserDetails(profileID, token)
 
     // Get the logged-in user's listings
     const { data: userListings } = useUserListings(user ? user.nickname : null, token)
@@ -34,7 +37,10 @@ export default function Profile({accessToken}) {
     const [initialized, setInitialized] = useState(false)
 
     useEffect(() => {
-        if (!initialized && typeof userDetails !== 'undefined' && typeof userListings !== 'undefined' && !isLoading) {
+        // Redirect for unknown user
+        if (userDetailsError) {
+            router.push('/')
+        } else if (!initialized && typeof userDetails !== 'undefined' && typeof userListings !== 'undefined' && userDetailsLoggedIn !== 'undefined' && !isLoading) {
             setInitialized(true)
         }
     })
@@ -82,7 +88,7 @@ export default function Profile({accessToken}) {
                                 ),
                                 key: id,
                                 children: (
-                                    <ListComponent listings={i ? userDetails.saved : userDetails.listings} category="all" user={user} userListings={userListings} canOffer={false} />
+                                    <ListComponent listings={i ? userDetails.saved : userDetails.listings} category="all" user={user} saved={userDetailsLoggedIn.details.saved_listings} userListings={userListings} token={token} canOffer={false} />
                                 ),
                             }
                         })} />

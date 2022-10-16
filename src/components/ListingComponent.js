@@ -6,18 +6,40 @@ import { useRouter } from 'next/router'
 import { Space, Button } from 'antd'
 import { EyeInvisibleOutlined, UserOutlined, CalendarOutlined, AppstoreOutlined, FileTextOutlined } from '@ant-design/icons'
 import '../hooks/useUserDetails'
+import fetcher from '../helpers/fetcher'
 import { CATEGORIES } from '../helpers/categories'
 
 export default function ListingComponent(props) {
     const router = useRouter()
+    const token = props.token
     const listing = props.listing
     const showCategory = props.showCategory
     const user = props.user
+    let saved = props.saved
     let canOffer = props.canOffer
+
+    console.log(token)
     
     // Prevent ability to make an offer on user's own posts
     if (listing.creator === user.nickname) {
         canOffer = false
+    }
+
+    // Add listing to user's saved listings
+    const saveListing = async () => {
+        await fetcher(token, props.token, `api/user/save_listing`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: user.nickname,
+                listing_id: listing._id
+            }),
+        })
+        .then( () => {
+            saved.push(listing._id)
+        })
     }
 
     return (
@@ -54,6 +76,7 @@ export default function ListingComponent(props) {
                         }
                         <Space direction="horizontal" size={0} style={{paddingTop: 5}}>
                             <Button style={{margin: '0 5px 0 0'}} onClick={() => {router.push(`/listing/${listing._id}`)}}>View Listing</Button>
+                            {user.nickname !== listing.creator && <Button style={{margin: '0 5px 0 5px'}} disabled={saved.includes(listing._id)} onClick={saveListing}>Save Listing</Button>}
                             {/* TODO: Make this into a select dropdown, show user's listings */}
                             {canOffer && <Button style={{margin: '0 0 0 5px'}} type="primary">Make Offer</Button>}
                         </Space>

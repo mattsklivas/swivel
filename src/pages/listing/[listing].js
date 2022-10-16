@@ -16,6 +16,7 @@ import EditListingModal from '../../components/modals/EditListingModal'
 import ListComponent from '../../components/ListComponent'
 import useListing from '../../hooks/useListing'
 import useUserListings from '../../hooks/useUserListings'
+import useUserDetails from '../../hooks/useUserDetails'
 import fetcher from '../../helpers/fetcher'
 import { CATEGORIES } from '../../helpers/categories'
 
@@ -37,12 +38,20 @@ export default function Listing({accessToken}) {
     // Get the logged-in user's listings
     const { data: userListings } = useUserListings(user ? user.nickname : '', token)
 
+    // Get the logged-in user's details
+    const { data: userDetails } = useUserDetails(user ? user.nickname : '', token)
+
     // Flag to check if hooks have completed
     const [initialized, setInitialized] = useState(false)
 
     useEffect(() => {
-        if (!initialized && typeof listing !== 'undefined' && typeof userListings !== 'undefined' && !isLoading) {
-            setInitialized(true)
+        if (!initialized && typeof listing !== 'undefined' && typeof userListings !== 'undefined' && typeof userDetails !== 'undefined' && !isLoading) {
+            if (listing == null) {
+                // Redirect for unknown listing
+                router.push('/')
+            } else {
+                setInitialized(true)
+            }
         }
     })
 
@@ -157,7 +166,7 @@ export default function Listing({accessToken}) {
                                 ),
                                 key: id,
                                 children: (
-                                    <ListComponent listings={!i ? listing.offers : listing.myOffers} category="all" user={user} userListings={userListings} canOffer/>
+                                    <ListComponent listings={!i ? listing.offers : listing.myOffers} category="all" user={user} userListings={userListings} saved={userDetails.details.saved_listings} token={token} canOffer/>
                                 ),
                             }
                         })} />
