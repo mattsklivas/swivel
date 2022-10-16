@@ -75,7 +75,6 @@ function routes(app) {
     // Delete one listing
     router.delete('/:listingID', async(req, res) => {
         try {
-            console.log('delete')
             const removeListing = await ListingModel.remove({_id: req.params.listingID})
             res.status(200).json(removeListing)
         } catch(err) {
