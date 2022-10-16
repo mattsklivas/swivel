@@ -9,7 +9,6 @@ const ListingModel = require('../definitions/listing')
 const UserModel = require('../definitions/user')
 
 function routes(app) {
-    console.log('ok')
     // Return all listings
     router.get('/all', async (req, res) => {
         try {
@@ -82,9 +81,7 @@ function routes(app) {
     // Add an offer to a listing
     // body: listing_id is the current listing to add offers to, offer_id is the listing ID as a string
     router.put('/offer', async(req, res) => {
-        console.log('ok')
         try {
-            console.log('ok')
             // Get current offers
             const offerArray = await ListingModel.find({_id: req.body.listing_id}).select('offers')
             // Check if new offer exist in the current offer
@@ -92,8 +89,6 @@ function routes(app) {
                 // Add the new offers
                 offerArray[0].offers.push(req.body.offer_id)
             }
-
-            console.log(offerArray[0])
 
             // Update offer with new listings
             const updateListing = await ListingModel.updateOne(
@@ -122,13 +117,12 @@ function routes(app) {
     })
 
     // Update the listing with an accepted offer
-    // param: listingID is the current listing to add accepted offer to
-    // body: acceptedOffer is the listing ID as a string
-    router.patch('/acceptOffer/:listingID', async(req, res) => {
+    // body: listing_id is the current listing to add accepted offer to, accepted_id is the ID of the listing to accept
+    router.put('/accept', async(req, res) => {
         try {
             const updateListing = await ListingModel.updateOne(
-                {_id: req.params.listingID}, 
-                {$set: {accepted: req.body.acceptedOffer}})                             
+                {_id: req.body.listing_id}, 
+                {$set: {accepted: req.body.accepted_id}})                             
             res.status(200).json(updateListing)      
         }catch(err){
             res.status(500).json({message: err})

@@ -152,33 +152,67 @@ export default function Listing({accessToken}) {
                             </Space>
                         </Space>
                     </Space>
-                    <Tabs
-                        centered
-                        style={{padding: '20px 0 0 0'}}
-                        defaultActiveKey="1"
-                        items={[TeamOutlined, UserOutlined].map((Icon, i) => {
-                            const id = String(i + 1)
-                            const title = !i ? 'All Offers' : 'My Offers'
+                    { user.nickname !== listing.details.creator ?
+                        <Tabs
+                            centered
+                            style={{padding: '20px 0 0 0'}}
+                            defaultActiveKey="1"
+                            items={[TeamOutlined, UserOutlined].map((Icon, i) => {
+                                const id = String(i + 1)
+                                const title = !i ? 'All Offers' : 'My Offers'
 
-                            return {
-                                label: (
-                                    <span>
-                                        <Icon />
-                                        {title}
-                                    </span>
-                                ),
-                                key: id,
-                                children: (
-                                    <ListComponent 
-                                        listings={!i ? listing.offers : listing.offers.reduce((previous, current) => {return userListingIDs.includes(current._id) ? previous.concat(current) : previous}, [])} 
-                                        category="all" user={user} userListings={userListings} 
-                                        saved={userDetails.saved} 
-                                        token={token} 
-                                        canOffer
-                                    />
-                                ),
-                            }
-                        })} />
+                                return {
+                                    label: (
+                                        <span>
+                                            <Icon />
+                                            {title}
+                                        </span>
+                                    ),
+                                    key: id,
+                                    children: (
+                                        <ListComponent 
+                                            listings={!i ? listing.offers : listing.offers.reduce((previous, current) => {return userListingIDs.includes(current._id) ? previous.concat(current) : previous}, [])} 
+                                            category="all" user={user} userListings={userListings} 
+                                            saved={userDetails.saved} 
+                                            token={token} 
+                                            canOffer
+                                        />
+                                    ),
+                                }
+                            })} 
+                        />
+                        :
+                        <Tabs
+                            centered
+                            style={{padding: '20px 0 0 0'}}
+                            defaultActiveKey="1"
+                            items={[TeamOutlined].map((Icon, i) => {
+                                const id = String(i + 1)
+                                const title = 'All Offers'
+
+                                return {
+                                    label: (
+                                        <span>
+                                            <Icon />
+                                            {title}
+                                        </span>
+                                    ),
+                                    key: id,
+                                    children: (
+                                        <ListComponent 
+                                            listings={listing.offers} 
+                                            category="all" user={user} userListings={userListings} 
+                                            saved={userDetails.saved} 
+                                            token={token} 
+                                            canOffer
+                                            canAccept
+                                            sourceListing={listing.details}
+                                        />
+                                    ),
+                                }
+                            })} 
+                        />
+                    }
                     { showUpdateModal && <EditListingModal hideModal={() => {setShowUpdateModal(false)}} listing={listing.details} token={token} />}
                 </div>
                 <div style={{height: 30}}/>

@@ -17,12 +17,25 @@ export default function ListingComponent(props) {
     const showCategory = props.showCategory
     const user = props.user
     const userListings = props.userListings
+    const sourceListing = props.sourceListing
+    const canAccept = props.canAccept
     let saved = props.saved
     let canOffer = props.canOffer
+    let enableAccept = false
     
     // Prevent ability to make an offer on user's own posts
     if (listing.creator === user.nickname) {
         canOffer = false
+    }
+
+    // Prevent ability to make an offer if an offer has already been accepted
+    if (canOffer && sourceListing?.accepted) {
+        canOffer = false
+    }
+
+    // Enable ability to accept an offer
+    if (canAccept && sourceListing.accepted == null && sourceListing.offers.includes(listing._id)) {
+        enableAccept = true
     }
 
     // Handle state of OfferModal
@@ -62,9 +75,26 @@ export default function ListingComponent(props) {
         })
     }
 
+    // Accept an offer
+    const acceptOffer = async () => {
+        await fetcher(token, `api/listing/accept`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                accepted_id: listing._id,
+                listing_id: sourceListing._id
+            }),
+        })
+        .then( () => {
+            saved = saved.filter(item => item._id !== listing._id)
+        })
+    }
+
     return (
         <>
-            <div style={{backgroundColor: 'white', borderRadius: '15px', border: '1px solid #DEDEDE', padding: '5vh', marginLeft: 'auto', marginRight: 'auto', marginBottom: 10}}>
+            <div style={{backgroundColor: 'white', borderRadius: '15px', border: sourceListing?.accepted === listing._id ? '3px solid #13c2c2' : '1px solid #DEDEDE', padding: '5vh', marginLeft: 'auto', marginRight: 'auto', marginBottom: 10}}>
                 <Space size={25} align="start">
                     <div style={{height: 200, width: 200, borderRadius: 5, border: '2px solid grey', padding: 5, backgroundColor: '#FFFFFF'}}>
                         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '37%'}}>
@@ -74,7 +104,10 @@ export default function ListingComponent(props) {
                     </div>
                     <Space direction="horizontal" align="start">
                         <Space direction="vertical" align="start">
-                            <span style={{fontSize: '17px', fontWeight: 600, cursor: 'pointer'}} onClick={() => router.push(`/listing/${listing._id}`)}>{listing.title}</span>
+                            <Space direction="horizontal" align="start">
+                                {sourceListing?.accepted === listing._id && <span style={{fontSize: '17px', fontWeight: 600, cursor: 'pointer', color: '#13c2c2'}} onClick={() => router.push(`/listing/${listing._id}`)}>[ACCEPTED] </span>}
+                                <span style={{fontSize: '17px', fontWeight: 600, cursor: 'pointer'}} onClick={() => router.push(`/listing/${listing._id}`)}>{listing.title}</span>
+                            </Space>
                             <div style={{fontSize: '14px'}}>
                                 <Space direction="horizontal" align="start">
                                     <FileTextOutlined style={{fontSize: 20}}/>
@@ -96,7 +129,7 @@ export default function ListingComponent(props) {
                                 </div>
                             }
                             <Space direction="horizontal" size={0} style={{paddingTop: 5}}>
-                                <Button style={{margin: '0 5px 0 0'}} onClick={() => {router.push(`/listing/${listing._id}`)}}>View Listing</Button>
+                                <Button style={{margin: '0 5px 0 5px'}} onClick={() => {router.push(`/listing/${listing._id}`)}}>View Listing</Button>
                                 {user.nickname !== listing.creator ? !saved.reduce((previous, current) => {return previous.concat(current._id)}, []).includes(listing._id) ?
                                     <Button style={{margin: '0 5px 0 5px'}} onClick={saveListing}>Save Listing</Button>
                                     :
@@ -104,7 +137,8 @@ export default function ListingComponent(props) {
                                     :
                                     ''
                                 }
-                                {canOffer && <Button style={{margin: '0 0 0 5px'}} type="primary" onClick={() => setIsModalOpen(true)}>Make Offer</Button>}
+                                {canOffer && <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => setIsModalOpen(true)}>Make Offer</Button>}
+                                {enableAccept && <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={acceptOffer}>Accept Offer</Button>}
                             </Space>
                         </Space>
                     </Space>
