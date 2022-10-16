@@ -52,12 +52,12 @@ function routes(app) {
     // Add saved listing to user
     // param: username is the user to add the saved_listing to
     // body: listingID is the listing as a ID string 
-    router.patch('/savedListing/:username', async(req, res) => {
+    router.patch('/saveListing/:nickname', async(req, res) => {
         try {
             // Get the string of the offer id from the body 
             const savedListingNew = req.body.listingID
             // Get current offerings
-            const savedListing = await UserModel.find({username: req.params.username}).select('saved_listings')        
+            const savedListing = await UserModel.find({username: req.params.nickname}).select('saved_listings')        
             // check if new offering exist in the current offering
             if(!savedListing[0].saved_listings.includes(savedListingNew)){
                 savedListing[0].saved_listings.push(savedListingNew)
@@ -65,9 +65,24 @@ function routes(app) {
 
             // Update accepted_listing
             const updateListing = await UserModel.updateOne(
-                {username: req.params.username}, 
+                {username: req.params.nickname}, 
                 {$set: {saved_listings: savedListing[0].saved_listings}})                             
             res.status(200).json(updateListing)      
+        }catch(err){
+            res.status(500).json({message: err})
+        }
+    })
+
+    // Remove a listing from the saved_listing
+    // param: nickname is the username that you want to remove the save listing 
+    // body: listingID is the offer ID(string) that you want to remove
+    router.patch('/removeSave/:nickname', async(req,res) => {
+        try{
+            // $pullAll removes all instance of the value from the array
+            const updateSavedListing = await UserModel.updateOne(
+                {username: req.params.nickname}, 
+                {$pullAll: {saved_listings: [req.body.listingID]}})
+            res.status(200).json(updateSavedListing)
         }catch(err){
             res.status(500).json({message: err})
         }
