@@ -50,8 +50,28 @@ function routes(app) {
     })
 
     // Add saved listing to user
+    // param: username is the user to add the saved_listing to
+    // body: listingID is the listing as a ID string 
+    router.patch('/savedListing/:username', async(req, res) => {
+        try {
+            // Get the string of the offer id from the body 
+            const savedListingNew = req.body.listingID
+            // Get current offerings
+            const savedListing = await UserModel.find({username: req.params.username}).select('saved_listings')        
+            // check if new offering exist in the current offering
+            if(!savedListing[0].saved_listings.includes(savedListingNew)){
+                savedListing[0].saved_listings.push(savedListingNew)
+            }
 
-    // Add offer to user
+            // Update accepted_listing
+            const updateListing = await UserModel.updateOne(
+                {username: req.params.username}, 
+                {$set: {saved_listings: savedListing[0].saved_listings}})                             
+            res.status(200).json(updateListing)      
+        }catch(err){
+            res.status(500).json({message: err})
+        }
+    })
 
     return router
 }
