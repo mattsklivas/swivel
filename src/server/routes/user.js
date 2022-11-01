@@ -72,15 +72,14 @@ function routes(app) {
         }
     })
 
-    // Remove a listing from the saved_listing
-    // param: nickname is the username that you want to remove the save listing 
-    // body: listingID is the offer ID(string) that you want to remove
-    router.patch('/removeSave/:nickname', async(req,res) => {
+    // Unsave a listing
+    // body: username is the user for which to remove the saved listing, listing_id is the offer ID (string) to be removed
+    router.patch('/unsave_listing', async(req,res) => {
         try{
             // $pullAll removes all instance of the value from the array
             const updateSavedListing = await UserModel.updateOne(
-                {username: req.params.nickname}, 
-                {$pullAll: {saved_listings: [req.body.listingID]}})
+                {username: req.body.username}, 
+                {$pullAll: {saved_listings: [req.body.listing_id]}})
             res.status(200).json(updateSavedListing)
         }catch(err){
             res.status(500).json({message: err})
