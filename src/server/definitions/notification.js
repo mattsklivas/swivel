@@ -2,7 +2,7 @@
 const mongoose = require('mongoose')
 
 // Data model for notifications
-const NotifSchema = new mongoose.Schema({
+const NotificationSchema = new mongoose.Schema({
     // User for which the notification is sent to
     user_to: {
         type: String,
@@ -20,7 +20,17 @@ const NotifSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    user_listing_title: { 
+        type: String,
+        required: true,
+        trim: true
+    },
     user_from_listing_id: { 
+        type: String,
+        required: true,
+        trim: true
+    },
+    user_from_listing_title: { 
         type: String,
         required: true,
         trim: true
@@ -30,9 +40,13 @@ const NotifSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true
+    },
+    seen: {
+        type: Boolean,
+        default: false
     }
 }, {
-    collection: 'notifications'
+    collection: 'notification'
 })
 
-module.exports = mongoose.model('notif', NotifSchema)
+module.exports = mongoose.model('notification', NotificationSchema)
