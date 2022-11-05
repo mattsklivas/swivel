@@ -21,7 +21,6 @@ function routes(app) {
 
     // Return one listing and the listing's offers
     // param: listingID is the records to be returned
-    // TODO: include listing offers as well
     router.get('/:listingID', async (req, res) => {
         try {
             // Fetch one listing in the database
@@ -47,6 +46,7 @@ function routes(app) {
     })
 
     // Create a listing
+    // Body: creator as string, category as string, title as string, description as string
     router.post('/create', async (req, res) => {     
         try {
             // Build the listing object
@@ -66,6 +66,7 @@ function routes(app) {
 
     // Update a listing
     // param: listingID is the record to be updated
+    // body: title as string, category as string, description as string
     router.patch('/:listingID', async(req, res) => {
         try {
             const updateListing = await ListingModel.updateOne(
@@ -96,20 +97,19 @@ function routes(app) {
                 {$set: {offers: offerArray[0].offers}})                             
             res.status(200).json(updateListing)      
         }catch(err){
-            console.log(err)
             res.status(500).json({message: err})
         }
     })
 
     // Remove offers from a listing
-    router.patch('/deleteOffer/:listingID', async(req,res) => {
-        try{
-            // Get the string of ids from the body and split by ',' into an array
-            const removeOfferArray = req.body.id.split(',')
-
+    // Body: listingID is the current listing for which to delete an offer
+    // offerID is the offer ID (string) that you want to remove
+    router.patch('/offer/delete/:listingID', async(req,res) => {
+        try {
+            // $pullAll removes all instance of the value from the array
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
-                {$pullAll: {offers: removeOfferArray}})
+                {$pullAll: {offers: [req.body.offerID]}})
             res.status(200).json(updateListing)
         }catch(err){
             res.status(500).json({message: err})
@@ -130,7 +130,7 @@ function routes(app) {
     })
 
     // Delete one listing
-    // param: listingID is the records to be deleted
+    // params: listingID is the records to be deleted
     router.delete('/:listingID', async(req, res) => {
         try {
             // Delete the record
@@ -141,12 +141,10 @@ function routes(app) {
             listings.forEach(async element => {
                 // Check if the deleted offer exist in the offers
                 if(element.offers.includes(req.params.listingID)){
-                    // Filter out the deleted offer
-                    const newListing = element.offers.filter(item => item !== req.params.listingID)
-                    // update the offer list
+                    // Removes all instance of the value from the array
                     await ListingModel.updateOne(
                         {_id: element._id}, 
-                        {$set: {offers: newListing}})
+                        {$pullAll: {offers: [req.params.listingID]}})
                 }                 
             })
 
@@ -155,13 +153,11 @@ function routes(app) {
             userRecords.forEach(async user => {               
                 // Check if the deleted offer exist in the offers
                 if(user.saved_listings.includes(req.params.listingID)){
-                    // Filter out the deleted offer
-                    const newSavedListing = user.saved_listings.filter(item => item !== req.params.listingID)
-                    // update the offer list
+                    // Remove the offer from the saved listings
                     await UserModel.updateOne(
                         {_id: user._id}, 
-                        {$set: {saved_listings: newSavedListing}})
-                }                 
+                        {$pullAll: {saved_listings: [req.params.listingID]}})
+                }
             })
             res.status(200).json(removeListing)
         } catch(err) {

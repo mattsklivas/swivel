@@ -26,7 +26,7 @@ export default function ListComponent(props) {
         return (
             <div>
                 {category !== 'all' ? 
-                    listings.map((listing, i) => {
+                    listings.reverse().map((listing, i) => {
                         return (
                             <ListingComponent 
                                 key={i} 
@@ -43,7 +43,7 @@ export default function ListComponent(props) {
                         )
                     })
                     :
-                    listings.map((listing, i) => {
+                    listings.reverse().map((listing, i) => {
                         return (
                             <ListingComponent 
                                 key={i} 

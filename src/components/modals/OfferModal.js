@@ -12,7 +12,8 @@ function OfferModal(props) {
     const [value, setValue] = useState(userListings.length !== 0 ? userListings[0]._id : null)
 
     // Make offer
-    const handleSubmit = async () => {      
+    const handleSubmit = async () => {
+        let offerID = value
         await fetcher(props.token, 'api/listing/offer', {
             method: 'PUT',
             headers: {
@@ -20,16 +21,16 @@ function OfferModal(props) {
             },
             body: JSON.stringify({
                 listing_id: listing._id,
-                offer_id: value,
+                offer_id: offerID
             }),
         })
         .then( () => {
             setVisible(false)
-            props.hideOfferModal()
+            props.hideOfferModal(offerID)
         })
         .catch(() => { 
             setVisible(false)
-            props.hideOfferModal()
+            props.hideOfferModal('')
         })
         await fetcher(props.token, 'api/notif/notifUpdate', {
             method: 'POST',
@@ -50,7 +51,7 @@ function OfferModal(props) {
 
     const handleCancel = () => {
         setVisible(false)
-        props.hideOfferModal()
+        props.hideOfferModal('')
     }
 
     // Change selected value

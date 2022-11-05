@@ -19,24 +19,37 @@ export default function ListingComponent(props) {
     const userListings = props.userListings
     const sourceListing = props.sourceListing
     const canAccept = props.canAccept
-    let saved = props.saved
-    let canOffer = props.canOffer
-    let enableAccept = false
-    
-    // Prevent ability to make an offer on user's own posts
-    if (listing.creator === user.nickname) {
-        canOffer = false
-    }
-
-    // Prevent ability to make an offer if an offer has already been accepted
-    if (canOffer && sourceListing?.accepted) {
-        canOffer = false
-    }
-
-    // Enable ability to accept an offer
-    if (canAccept && sourceListing.accepted == null && sourceListing.offers.includes(listing._id)) {
-        enableAccept = true
-    }
+    const [saved, setSaved] = useState(props.saved)
+    const [canOffer, setCanOffer] = useState(() => {
+        if (listing.creator === user.nickname) {
+            return false
+        } else if (props.canOffer && sourceListing?.accepted) {
+            return false
+        } else {
+            return props.canOffer
+        }
+    })
+    const [enableAccept, setEnableAccept] = useState(() => {
+        if (canAccept && sourceListing.accepted == null && sourceListing.offers.includes(listing._id)) {
+            return true
+        } else {
+            return false
+        }
+    })
+    const [canRescind, setCanRescind] = useState(() => {
+        if (listing.offers.some(element => userListings.reduce((prev, curr) => { return prev.concat(curr._id) }, []).includes(element))) {
+            return true
+        } else {
+            return false
+        }
+    })
+    const [isSaved, setIsSaved] = useState(() => {
+        if (saved.reduce((previous, current) => {return previous.concat(current._id)}, []).includes(listing._id)) {
+            return true
+        } else {
+            return false
+        }
+    })
 
     // Handle state of OfferModal
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -54,7 +67,7 @@ export default function ListingComponent(props) {
             }),
         })
         .then( () => {
-            saved.concat(listing._id)
+            setIsSaved(true)
         })
     }
 
@@ -71,7 +84,7 @@ export default function ListingComponent(props) {
             }),
         })
         .then( () => {
-            saved = saved.filter(item => item._id !== listing._id)
+            setIsSaved(false)
         })
     }
 
@@ -88,7 +101,26 @@ export default function ListingComponent(props) {
             }),
         })
         .then( () => {
-            saved = saved.filter(item => item._id !== listing._id)
+            canAccept(false)
+        })
+    }
+
+    // Rescind an offer
+    const rescindOffer = async () => {
+        let userOffers = userListings.reduce((prev, curr) => { return prev.concat(curr._id) }, [])
+        let offerID = listing.offers.find(element => userOffers.includes(element))
+        await fetcher(token, `api/listing/offer/delete/${listing._id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                offerID: offerID
+            }),
+        })
+        .then( () => {
+            // Disable ability to rescind an offer
+            setCanRescind(false)
         })
 
         await fetcher(token, `api/notif/notifUpdate`, {
@@ -146,21 +178,33 @@ export default function ListingComponent(props) {
                             }
                             <Space direction="horizontal" size={0} style={{paddingTop: 5}}>
                                 <Button style={{margin: '0 5px 0 5px'}} onClick={() => {router.push(`/listing/${listing._id}`)}}>View Listing</Button>
-                                {user.nickname !== listing.creator ? !saved.reduce((previous, current) => {return previous.concat(current._id)}, []).includes(listing._id) ?
+                                {user.nickname !== listing.creator ? !isSaved ?
                                     <Button style={{margin: '0 5px 0 5px'}} onClick={saveListing}>Save Listing</Button>
                                     :
                                     <Button style={{margin: '0 5px 0 5px'}} onClick={unsaveListing}>Unsave Listing</Button>
                                     :
                                     ''
                                 }
-                                {canOffer && <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => setIsModalOpen(true)}>Make Offer</Button>}
+                                {canOffer && canRescind && <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => rescindOffer()}>Rescind Offer</Button>}
+                                {canOffer && !canRescind && <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => setIsModalOpen(true)}>Make Offer</Button>}
                                 {enableAccept && <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={acceptOffer}>Accept Offer</Button>}
                             </Space>
                         </Space>
                     </Space>
                 </Space>
             </div>
-            {isModalOpen && <OfferModal hideOfferModal={() => setIsModalOpen(false)} listing={listing} userListings={userListings.filter(item => !listing.offers.includes(item._id))} token={token}/>}
+            {isModalOpen && 
+                <OfferModal 
+                    hideOfferModal={(offerMade) => {
+                        if (offerMade) {
+                            listing.offers = listing.offers.concat(offerMade)
+                            setCanRescind(true)
+                        }
+                        setIsModalOpen(false)
+                    }}
+                    listing={listing} 
+                    userListings={userListings} token={token}/>
+            }
         </>
     )
 }
