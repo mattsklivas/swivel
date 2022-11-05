@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 // import { React, useEffect } from 'react'
-import { React, useEffect, useState } from 'react'
+import { React, useEffect, useLayoutEffect, useState } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { useRouter } from 'next/router'
 import { Tabs } from 'antd'
@@ -23,10 +23,11 @@ const CATEGORIES = {
     other : 'Other'
 }
 
-export default function Home({accessToken}) {
+export default function Home({accessToken, username}) {
     const router = useRouter()
     const {user, error, isLoading} = useUser()
     const token = accessToken
+    const [notif, setNotif] = useState([])
 
     // Get all listings
     const { data: listings } = useListingsAll(token)
@@ -40,18 +41,44 @@ export default function Home({accessToken}) {
     // Flag to check if hooks have completed
     const [initialized, setInitialized] = useState(false)
 
-    // Wait for state variable initialization to show the page content
+    // function to fetch the notifications for the user
+     function fetchNotif (){
+        fetch(`api/notif/getNotifs/${username}`,
+        { method: 'GET',
+             headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        }
+        })
+        .then((res) =>{return res.json()})
+        .then((data) =>{
+            let val =[]
+            // eslint-disable-next-line no-restricted-syntax, guard-for-in
+            for(let i in data){
+                val.push({...data[i], id: i})
+            }
+            setNotif(val)
+            // console.log(val)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
+    useLayoutEffect(()=>{
+        fetchNotif()
+    },[])
+
     useEffect(() => {
         if (!initialized && typeof listings !== 'undefined' && typeof userListings !== 'undefined' && typeof userDetails !== 'undefined' && !isLoading) {
             setInitialized(true)
-        }
+        } 
     })
 
     // If the hooks have completed, display the page content
     if (user && initialized) {
         return (
             <>
-                <HeaderComponent user={user} token={token}/>
+                <HeaderComponent user={user} token={token} notif={notif}/>
                 <div style={{backgroundColor: 'white', width: '95%', height: 'auto', borderRadius: '15px', padding: '3vh 5vh 3vh 5vh', marginLeft: 'auto', marginRight: 'auto'}}>
                     <Tabs
                         centered
@@ -91,11 +118,13 @@ export default function Home({accessToken}) {
 export const getServerSideProps = async (context) => {
     // Fetch data from external API
     let accessToken = await auth0.getSession(context.req, context.res) || null
+    let username = null
     if (accessToken != null)  {
-        accessToken = accessToken.idToken
+        username = accessToken.user.nickname
+        accessToken = accessToken.idToken 
     }
 
     // Pass data to the page via props
-    return { props: {accessToken} }
+    return { props: {accessToken, username} }
 }
 

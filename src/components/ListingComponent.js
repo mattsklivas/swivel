@@ -84,11 +84,27 @@ export default function ListingComponent(props) {
             },
             body: JSON.stringify({
                 accepted_id: listing._id,
-                listing_id: sourceListing._id
+                listing_id: sourceListing._id,
             }),
         })
         .then( () => {
             saved = saved.filter(item => item._id !== listing._id)
+        })
+
+        await fetcher(token, `api/notif/notifUpdate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                accepted_id: listing._id, // user that made the initial listing, got offered by 'listing_user' and accepted that listing
+                accepted_user: listing.creator,
+                accepted_title: listing.title,
+                listing_id: sourceListing._id, // user that offered their listing to 'accepted_user' and they accepted 
+                listing_user:sourceListing.creator,
+                listing_title:sourceListing.title,
+                type: 'accepted'
+            }),
         })
     }
 

@@ -9,11 +9,10 @@ function OfferModal(props) {
     const [visible, setVisible] = useState(true)
     const userListings = props.userListings
     const listing = props.listing
-
     const [value, setValue] = useState(userListings.length !== 0 ? userListings[0]._id : null)
 
     // Make offer
-    const handleSubmit = async () => {
+    const handleSubmit = async () => {      
         await fetcher(props.token, 'api/listing/offer', {
             method: 'PUT',
             headers: {
@@ -21,7 +20,7 @@ function OfferModal(props) {
             },
             body: JSON.stringify({
                 listing_id: listing._id,
-                offer_id: value
+                offer_id: value,
             }),
         })
         .then( () => {
@@ -32,8 +31,23 @@ function OfferModal(props) {
             setVisible(false)
             props.hideOfferModal()
         })
+        await fetcher(props.token, 'api/notif/notifUpdate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                listing_id: listing._id, // user that created the inital listing
+                listing_user:listing.creator,
+                listing_title:listing.title,
+                accepted_user: '', // user that offered their listing to 'listing_user'
+                accepted_title: '',
+                accepted_id: value,
+                type:'offer made'
+            }),
+        })
     }
-    
+
     const handleCancel = () => {
         setVisible(false)
         props.hideOfferModal()
