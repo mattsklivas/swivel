@@ -13,7 +13,7 @@ function HeaderComponent(props) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const user = props.user
     const token = props.token
-    const [arr, setArr] = useState([])
+    const [arr, setArr] = useState([]) // array created by us to display dynamic drop down from props.notif
     const values=[...arr]
     
     const onClick = ({ key }) => {
@@ -52,7 +52,7 @@ function HeaderComponent(props) {
 
     // function to  parse the notifications and create a array for the drop down component
     function parseNotif(){
-        if ((arr === undefined || arr.length === 0) && props.notif.length>0) {
+        if ((arr === undefined || arr.length === 0) && props.notif.length>0) { // set the array for drop down component, from prop.notif
             props.notif.map((item) =>
             values.push({ label: createLabel( item), key: item._id.concat('/',item.primaryUserId)},)) 
             // key has ( the id for the notification/ listing id of the users listing)
@@ -90,12 +90,13 @@ function HeaderComponent(props) {
     )
 
     useEffect(() => { 
-      parseNotif() // parses notification data accordingly
+        // enable this to work with notification data, 
+      // parseNotif() // parses notification data 
     },[])
 
-    console.log(arr) // array created by us to display in drop down
-    console.log(items) // dummy array fron ant design
-    console.log(props.notif) // values received from the index page props. 
+    console.log(arr) // array created by us to display in drop down from props.notif
+    console.log(items) // dummy array from ant design
+    // console.log(props.notif) // values received from the index page props. 
 
     return (
         <>
