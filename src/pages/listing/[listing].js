@@ -112,6 +112,7 @@ export default function Listing({accessToken}) {
                             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '37%'}}>
                                 <EyeInvisibleOutlined style={{fontSize: 20}}/>
                             </div>
+                            {/* <img src={`data:image/jpeg;base64,${listing.image}`}/> */}
                             <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
                         </div>
                         <Space direction="horizontal" align="start">

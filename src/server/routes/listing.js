@@ -5,6 +5,10 @@ const router = express.Router()
 
 // Import the Listing data model
 const ListingModel = require('../definitions/listing')
+// For File Base64 and upload
+const multer = require('multer') // multer import
+storage = multer.memoryStorage() //store files temp. in memory for base64 conversion
+const upload = multer({ storage }) // define upload
 // Import the User data model
 const UserModel = require('../definitions/user')
 
@@ -47,14 +51,15 @@ function routes(app) {
 
     // Create a listing
     // Body: creator as string, category as string, title as string, description as string
-    router.post('/create', async (req, res) => {     
-        try {
-            // Build the listing object
-            const listing = new ListingModel({
-                    creator: req.body.creator,
-                    category: req.body.category,
-                    title: req.body.title,
-                    description: req.body.description 
+  router.post('/create', upload.single('image') , async (req, res) => {
+    try {
+      // Build the listing object
+      const listing = new ListingModel({
+        creator: req.body.creator,
+        category: req.body.category,
+        title: req.body.title,
+        description: req.body.description,
+            image: req.file.buffer.toString("base64")
             })  
             const savedListing = await listing.save()
 
@@ -67,11 +72,11 @@ function routes(app) {
     // Update a listing
     // param: listingID is the record to be updated
     // body: title as string, category as string, description as string
-    router.patch('/:listingID', async(req, res) => {
+    router.patch('/:listingID',  upload.single('image'),  async(req, res) => {
         try {
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
-                {$set: {title: req.body.title, category: req.body.category, description: req.body.description}}
+                {$set: {title: req.body.title, category: req.body.category, description: req.body.description, image: req.file.buffer.toString("base64")}}
             )
             res.status(200).json(updateListing)
         } catch(err) {

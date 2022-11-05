@@ -24,7 +24,7 @@ function CreateModal(props) {
                 title: formData.title,
                 category: formData.category,
                 description: formData.description,
-                // image: formData.image
+                image: formData.image
             }),
         })
         .then( (res) => {

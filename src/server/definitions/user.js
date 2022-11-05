@@ -33,8 +33,7 @@ const UserSchema = new mongoose.Schema({
         type: String
     },
     avatar: {
-        data: Buffer,
-        contentType: String
+        type: String
     },
     saved_listings: [String]
 }, {

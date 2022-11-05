@@ -57,6 +57,7 @@ export default function Profile({accessToken}) {
                             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '37%'}}>
                                 <EyeInvisibleOutlined style={{fontSize: 20}}/>
                             </div>
+                            {/* <img style={{objectFit: 'cover'}} src={`data:image/jpeg;base64,${userDetails.details.avatar}`} /> */}
                             <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Avatar Not Found</span>
                         </div>
                         <Space direction="horizontal" align="start">
