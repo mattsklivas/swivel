@@ -104,7 +104,7 @@ function routes(app) {
     // Remove offers from a listing
     // Body: listingID is the current listing for which to delete an offer
     // offerID is the offer ID (string) that you want to remove
-    router.patch('/deleteOffer/:listingID', async(req,res) => {
+    router.patch('/offer/delete/:listingID', async(req,res) => {
         try {
             // $pullAll removes all instance of the value from the array
             const updateListing = await ListingModel.updateOne(
@@ -157,7 +157,7 @@ function routes(app) {
                     await UserModel.updateOne(
                         {_id: user._id}, 
                         {$pullAll: {saved_listings: [req.params.listingID]}})
-                }                 
+                }
             })
             res.status(200).json(removeListing)
         } catch(err) {
