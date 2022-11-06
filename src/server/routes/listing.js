@@ -97,20 +97,19 @@ function routes(app) {
                 {$set: {offers: offerArray[0].offers}})                             
             res.status(200).json(updateListing)      
         }catch(err){
-            console.log(err)
             res.status(500).json({message: err})
         }
     })
 
     // Remove offers from a listing
-    // Body: listingID is the current listing that you want to delete an offer
-    // offer is the offer ID(string) that you want to remove
-    router.put('/removeOffer', async(req,res) => {
-        try{
+    // Body: listingID is the current listing for which to delete an offer
+    // offerID is the offer ID (string) that you want to remove
+    router.patch('/offer/delete/:listingID', async(req,res) => {
+        try {
             // $pullAll removes all instance of the value from the array
             const updateListing = await ListingModel.updateOne(
-                {_id: req.body.listingID}, 
-                {$pullAll: {offers: [req.body.offer]}})
+                {_id: req.params.listingID}, 
+                {$pullAll: {offers: [req.body.offerID]}})
             res.status(200).json(updateListing)
         }catch(err){
             res.status(500).json({message: err})
@@ -131,7 +130,7 @@ function routes(app) {
     })
 
     // Delete one listing
-    // param: listingID is the records to be deleted
+    // params: listingID is the records to be deleted
     router.delete('/:listingID', async(req, res) => {
         try {
             // Delete the record
@@ -142,7 +141,7 @@ function routes(app) {
             listings.forEach(async element => {
                 // Check if the deleted offer exist in the offers
                 if(element.offers.includes(req.params.listingID)){
-                    // removes all instance of the value from the array
+                    // Removes all instance of the value from the array
                     await ListingModel.updateOne(
                         {_id: element._id}, 
                         {$pullAll: {offers: [req.params.listingID]}})
@@ -154,11 +153,11 @@ function routes(app) {
             userRecords.forEach(async user => {               
                 // Check if the deleted offer exist in the offers
                 if(user.saved_listings.includes(req.params.listingID)){
-                    // remove the offer list from the saved_listing
+                    // Remove the offer from the saved listings
                     await UserModel.updateOne(
                         {_id: user._id}, 
                         {$pullAll: {saved_listings: [req.params.listingID]}})
-                }                 
+                }
             })
             res.status(200).json(removeListing)
         } catch(err) {
