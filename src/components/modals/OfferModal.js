@@ -1,11 +1,13 @@
 // Import React and Antd elements
 import { React, useState } from 'react'
+import { useRouter } from 'next/router'
 import { Modal, Radio, Space, Divider } from 'antd'
 import { CalendarOutlined, AppstoreOutlined, FileTextOutlined } from '@ant-design/icons'
 import fetcher from '../../helpers/fetcher'
 import { CATEGORIES } from '../../helpers/categories'
 
 function OfferModal(props) {
+    const router = useRouter()
     const [visible, setVisible] = useState(true)
     const userListings = props.userListings
     const listing = props.listing
@@ -28,6 +30,9 @@ function OfferModal(props) {
         .then( () => {
             setVisible(false)
             props.hideOfferModal(offerID)
+            if(window.location.pathname.includes('listing')){
+                router.reload(window.location.pathname)
+            } 
         })
         .catch(() => { 
             setVisible(false)

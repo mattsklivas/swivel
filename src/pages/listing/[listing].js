@@ -66,8 +66,9 @@ export default function Listing({accessToken}) {
                     }
 
                     // Update the offer state
-                    let offer = listing.offers.find(element => userListings.reduce((prev, curr) => { return prev.concat(curr._id) }, []).includes(element))
-                    if (offer) {
+                    // let offer = listing.offers.find(element => userListings.reduce((prev, curr) => { return prev.concat(curr) }, []).includes(element))
+                    let offer = listing.offers.reduce((prev, cur) =>userListings.some((x) => x._id === cur._id) ? cur._id : prev,[])
+                    if (offer !== '' && typeof offer === 'string') {
                         setOfferID(offer)
                     }
                 }
@@ -160,6 +161,7 @@ export default function Listing({accessToken}) {
         })
         .then( () => {
             setOfferID('')
+            router.reload(window.location.pathname)
         })
     }
 
@@ -229,7 +231,7 @@ export default function Listing({accessToken}) {
                                             :
                                             <Button onClick={unsaveListing}>Unsave Listing</Button>
                                         }
-                                        {offerID ? 
+                                        {offerID !== "" ? 
                                             <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => rescindOffer()}>Rescind Offer</Button>
                                             :
                                             <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => setIsOfferModalOpen(true)}>Make Offer</Button>
@@ -240,6 +242,7 @@ export default function Listing({accessToken}) {
                         </Space>
                     </Space>
                     { user.nickname !== listing.details.creator ?
+                        // View listing for other creators
                         <Tabs
                             centered
                             style={{padding: '20px 0 0 0'}}
@@ -269,6 +272,7 @@ export default function Listing({accessToken}) {
                             })} 
                         />
                         :
+                        // View my listing
                         <Tabs
                             centered
                             style={{padding: '20px 0 0 0'}}
