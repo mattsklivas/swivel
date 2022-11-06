@@ -99,6 +99,26 @@ export default function Listing({accessToken}) {
         setShowUpdateModal(true)
     }
 
+    function DisplayImage() {
+        if(listing?.details?.image)
+        {
+            return (
+                <div>
+                    <img style={{ width: 200, height: 200, borderRadius: 5}} src={`data:image/jpeg;base64,${listing.details.image}`} />
+                </div>
+            )
+        }
+        else
+        {
+            return (
+                <div>
+                   <EyeInvisibleOutlined style={{justifyContent: 'center', fontSize: 20, alignItems: 'center', display: 'flex'}}/>
+                   <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
+                </div>
+            )
+        }
+    }
+
     const userListingIDs = userListings ? userListings.reduce((previous, current) => {return previous.concat(current._id)}, []): []
 
     // If the hooks have completed, display the page content
@@ -108,13 +128,9 @@ export default function Listing({accessToken}) {
                 <HeaderComponent user={user}/>
                 <div style={{backgroundColor: 'white', width: '95%', height: 'auto', borderRadius: '15px', padding: '5vh 5vh 3vh 5vh', marginLeft: 'auto', marginRight: 'auto'}}>
                     <Space size={25} align="start">
-                        <div style={{height: 200, width: 200, borderRadius: 5, border: '2px solid grey', padding: 5, backgroundColor: '#FFFFFF', marginTop: '10px'}}>
-                            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '37%'}}>
-                                <EyeInvisibleOutlined style={{fontSize: 20}}/>
-                            </div>
-                            {/* <img src={`data:image/jpeg;base64,${listing.image}`}/> */}
-                            <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
-                        </div>
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200, width: 200, borderRadius: 5, border: '2px solid grey', backgroundColor: '#FFFFFF'}}> 
+                            {DisplayImage()}
+                    </div>
                         <Space direction="horizontal" align="start">
                             <Space direction="vertical" align="start">
                                 <span style={{fontSize: '25px', fontWeight: 600}}>{listing.details.title}</span>

@@ -10,22 +10,26 @@ function CreateModal(props) {
     const router = useRouter()
     const [form] = Form.useForm()
     const [visible, setVisible] = useState(true)
+    const [file, setfile] = useState({fileList: []})
+    
     const user = props.user
     const token = props.token
 
+    const handleUpload = ({ fileList }) => {setfile({ fileList: fileList })};
+
     const handleSubmit = async (formData) => {
+        const form = new FormData();
+        form.append("creator", user.nickname)
+        form.append("title", formData.title)
+        form.append("category", formData.category)
+        form.append("description", formData.description)
+        if(file?.fileList[0]?.originFileObj)
+        {
+            form.append("image", file.fileList[0].originFileObj)        
+        }
         await fetcher(token, 'api/listing/create', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                creator: user.nickname,
-                title: formData.title,
-                category: formData.category,
-                description: formData.description,
-                image: formData.image
-            }),
+            body: form
         })
         .then( (res) => {
             setVisible(false)
@@ -77,7 +81,7 @@ function CreateModal(props) {
                     <Input.TextArea autoSize={{ minRows: 4, maxRows: 6 }}/>
                 </Form.Item>
                 <Form.Item label="Upload" value="image">
-                    <Upload listType="picture-card">
+                    <Upload fileList={file.fileList} onChange={handleUpload} beforeUpload={(file)=>{return false}} listType="picture-card" >
                         <div>
                             <PlusOutlined />
                             <div style={{ marginTop: 8 }}>Upload</div>

@@ -58,9 +58,12 @@ function routes(app) {
         creator: req.body.creator,
         category: req.body.category,
         title: req.body.title,
-        description: req.body.description,
-            image: req.file.buffer.toString("base64")
-            })  
+        description: req.body.description
+        })  
+        if(req.file != null)
+        {
+            listing.image = req.file.buffer.toString("base64")
+        }
             const savedListing = await listing.save()
 
             res.status(200).json({id: savedListing._id.toString()})

@@ -11,23 +11,26 @@ function EditListingModal(props) {
     const [form] = Form.useForm()
     const [visible, setVisible] = useState(true)
     const listing = props.listing
+    const [file, setfile] = useState({fileList: []})
 
     // Loading state variables
     const [isLoading, setIsLoading] = useState(false)
 
+    const handleUpload = ({ fileList }) => {setfile({ fileList: fileList })};
+
     const handleSubmit = async (formData) => {
         setIsLoading(true)
+        const form = new FormData();
+        form.append("title", formData.title ? formData.title : listing.title ? listing.title : '')
+        form.append("category", formData.category ? formData.category : listing.category ? listing.category : '')
+        form.append("description", formData.description ? formData.description : listing.description ? listing.description : '')
+        if(file?.fileList[0]?.originFileObj)
+        {
+            form.append("image", file.fileList[0].originFileObj)
+        }
         await fetcher(props.token, `api/listing/${listing._id}`, {
             method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title: formData.title ? formData.title : listing.title ? listing.title : '',
-                category: formData.category ? formData.category : listing.category ? listing.category : '',
-                description: formData.description ? formData.description : listing.description ? listing.description : '',
-                // avatar: formData.avatar
-            }),
+            body: form
         })
         .then( () => {
             router.reload(window.location.pathname)
@@ -45,7 +48,7 @@ function EditListingModal(props) {
     }
 
     return (
-        <Modal className="edit-profile-modal" title="Edit Profile" open={visible} onOk={form.submit} onCancel={handleCancel} confirmLoading={isLoading}>
+        <Modal className="edit-profile-modal" title="Edit Listing" open={visible} onOk={form.submit} onCancel={handleCancel} confirmLoading={isLoading}>
             <Form
                 initialValues={{ title: listing.title, category: listing.category, description: listing.description || '' }}
                 form={form}
@@ -77,8 +80,8 @@ function EditListingModal(props) {
                 <Form.Item label="Description" name="description" key="description" rules={[{ required: true, message: 'A description is required'}]}>
                     <Input.TextArea autoSize={{ minRows: 4, maxRows: 6 }}/>
                 </Form.Item>
-                <Form.Item label="Upload" value="image" key="image">
-                    <Upload listType="picture-card">
+                <Form.Item label="Upload" value="image">
+                    <Upload fileList={file.fileList} onChange={handleUpload} beforeUpload={(file)=>{return false}} listType="picture-card">
                         <div>
                             <PlusOutlined />
                             <div style={{ marginTop: 8 }}>Upload</div>

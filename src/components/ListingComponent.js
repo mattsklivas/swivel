@@ -92,16 +92,32 @@ export default function ListingComponent(props) {
         })
     }
 
+    function DisplayImage() {
+        if(listing?.image)
+        {
+            return (
+                <div>
+                    <img style={{ width: 200, height: 200, borderRadius: 5}} src={`data:image/jpeg;base64,${listing.image}`} />
+                </div>
+            )
+        }
+        else
+        {
+            return (
+                <div>
+                   <EyeInvisibleOutlined style={{justifyContent: 'center', fontSize: 20, alignItems: 'center', display: 'flex'}}/>
+                   <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
+                </div>
+            )
+        }
+    }
+
     return (
         <>
             <div style={{backgroundColor: 'white', borderRadius: '15px', border: sourceListing?.accepted === listing._id ? '3px solid #13c2c2' : '1px solid #DEDEDE', padding: '5vh', marginLeft: 'auto', marginRight: 'auto', marginBottom: 10}}>
                 <Space size={25} align="start">
-                    <div style={{height: 200, width: 200, borderRadius: 5, border: '2px solid grey', padding: 5, backgroundColor: '#FFFFFF'}}>
-                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '37%'}}>
-                            <EyeInvisibleOutlined style={{fontSize: 20}}/>
-                        </div>
-                       {/*<img src={`data:image/jpeg;base64,${listing.image}`}/> */} 
-                        <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200, width: 200, borderRadius: 5, border: '2px solid grey', backgroundColor: '#FFFFFF'}}>
+                        {DisplayImage()}
                     </div>
                     <Space direction="horizontal" align="start">
                         <Space direction="vertical" align="start">

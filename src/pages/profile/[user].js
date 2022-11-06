@@ -46,6 +46,25 @@ export default function Profile({accessToken}) {
         }
     })
 
+    function DisplayImage() {
+        if(userDetails?.details?.avatar)
+        {
+            return (
+                <div>
+                    <img style={{display: 'flex', width: 200, height: 200, borderRadius: 5, aspectRatio: 9/2}} src={`data:image/jpeg;base64,${userDetails.details.avatar}`} />
+                </div>
+            )
+        }
+        else
+        {
+            return (
+                <div>
+                   <EyeInvisibleOutlined style={{justifyContent: 'center', fontSize: 20, alignItems: 'center', display: 'flex'}}/>
+                   <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
+                </div>
+            )
+        }
+    }
     // If the hooks have completed, display the page content
     if (user && initialized) {
         return (
@@ -53,12 +72,8 @@ export default function Profile({accessToken}) {
                 <HeaderComponent user={user}/>
                 <div style={{backgroundColor: 'white', width: '95%', height: 'auto', borderRadius: '15px', padding: '5vh 5vh 3vh 5vh', marginLeft: 'auto', marginRight: 'auto'}}>
                     <Space size={25} align="start">
-                        <div style={{height: 200, width: 200, borderRadius: 5, border: '2px solid grey', padding: 5, backgroundColor: '#FFFFFF', marginTop: '10px'}}>
-                            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '37%'}}>
-                                <EyeInvisibleOutlined style={{fontSize: 20}}/>
-                            </div>
-                            {/* <img style={{objectFit: 'cover'}} src={`data:image/jpeg;base64,${userDetails.details.avatar}`} /> */}
-                            <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Avatar Not Found</span>
+                        <div style={{display: 'flex', height: 200, width: 200, borderRadius: 5, border: '2px solid grey', backgroundColor: '#FFFFFF'}}>
+                            {DisplayImage()}
                         </div>
                         <Space direction="horizontal" align="start">
                             <Space direction="vertical" align="start">

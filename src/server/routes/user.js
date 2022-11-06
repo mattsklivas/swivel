@@ -31,7 +31,7 @@ function routes(app) {
     })
 
     // Update a user's profile details
-    router.patch('/profile/:nickname', upload.single('image') , async(req, res) => {
+    router.patch('/profile/:nickname', upload.single('avatar') , async(req, res) => {
         try {
             // Update one
             const updatedUser = await UserModel.updateOne(
