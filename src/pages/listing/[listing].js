@@ -49,6 +49,8 @@ export default function Listing({accessToken}) {
     // Flag to check if hooks have completed
     const [initialized, setInitialized] = useState(false)
 
+    const [listing2, setListing2] = useState([])
+
     // Wait for state variable initialization to show the page content
     useEffect(() => {
         if (!initialized && typeof listing !== 'undefined' && typeof userListings !== 'undefined' && typeof userDetails !== 'undefined' && !isLoading) {
@@ -64,10 +66,10 @@ export default function Listing({accessToken}) {
                     } else {
                         setCanSave(false)
                     }
-
+                    
                     // Update the offer state
                     // let offer = listing.offers.find(element => userListings.reduce((prev, curr) => { return prev.concat(curr) }, []).includes(element))
-                    let offer = listing.offers.reduce((prev, cur) =>userListings.some((x) => x._id === cur._id) ? cur._id : prev,[])
+                    let offer = listing.offers.reduce((prev, cur) =>userListings.some((x) => x._id === cur._id) ? cur._id : prev,[])                
                     if (offer !== '' && typeof offer === 'string') {
                         setOfferID(offer)
                     }
@@ -161,7 +163,7 @@ export default function Listing({accessToken}) {
         })
         .then( () => {
             setOfferID('')
-            router.reload(window.location.pathname)
+            // router.reload(window.location.pathname)
         })
     }
 
@@ -173,6 +175,17 @@ export default function Listing({accessToken}) {
     // Handle displaying of listing update modal
     const handleShowUpdateModal = () => {
         setShowUpdateModal(true)
+    }
+
+    const handleMakeOffer = async ()=>{
+        await fetcher(token, `/api/listing/${listingID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((req)=>{
+            setListing2(req)
+        })
     }
 
     const userListingIDs = userListings ? userListings.reduce((previous, current) => {return previous.concat(current._id)}, []): []

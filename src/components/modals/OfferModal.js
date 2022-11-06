@@ -30,9 +30,6 @@ function OfferModal(props) {
         .then( () => {
             setVisible(false)
             props.hideOfferModal(offerID)
-            if(window.location.pathname.includes('listing')){
-                router.reload(window.location.pathname)
-            } 
         })
         .catch(() => { 
             setVisible(false)

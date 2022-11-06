@@ -1,7 +1,6 @@
 // Import React
 import { React, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { notification } from 'antd'
 import auth0 from '../../auth/auth0'
 import LoadingComponent from '../components/LoadingComponent'
 import fetcher from '../helpers/fetcher'
