@@ -182,8 +182,8 @@ export default function Listing({accessToken}) {
             )
         } else {
             return (
-                <div style={{paddingLeft: '20%'}}>
-                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '65%'}}>
+                <div>
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                         <EyeInvisibleOutlined style={{fontSize: 20}}/>
                     </div>
                     <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>

@@ -84,9 +84,14 @@ function routes(app) {
     // body: title as string, category as string, description as string
     router.patch('/:listingID',  upload.single('image'),  async(req, res) => {
         try {
+            let imageData = ''
+            if(req?.file) {
+                imageData = req.file.buffer.toString('base64')
+            }
+
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
-                {$set: {title: req.body.title, category: req.body.category, description: req.body.description, image: req.file.buffer.toString('base64')}}
+                {$set: {title: req.body.title, category: req.body.category, description: req.body.description, image: imageData}}
             )
             res.status(200).json(updateListing)
         } catch(err) {
