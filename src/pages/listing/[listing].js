@@ -177,13 +177,15 @@ export default function Listing({accessToken}) {
         if(listing?.details?.image) {
             return (
                 <div>
-                    <img style={{ width: 200, height: 200, borderRadius: 5}} src={`data:image/jpeg;base64,${listing.details.image}`} />
+                    <img style={{ width: 200, height: 200, borderRadius: 5, objectFit: 'cover'}} src={`data:image/jpeg;base64,${listing.details.image}`} />
                 </div>
             )
         } else {
             return (
-                <div>
-                    <EyeInvisibleOutlined style={{justifyContent: 'center', fontSize: 20, alignItems: 'center', display: 'flex'}}/>
+                <div style={{paddingLeft: '20%'}}>
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '65%'}}>
+                        <EyeInvisibleOutlined style={{fontSize: 20}}/>
+                    </div>
                     <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
                 </div>
             )
