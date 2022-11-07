@@ -44,9 +44,9 @@ function routes(app) {
     // Mark a user's notifications as seen
     router.post('/seen/:username', async (req, res)=>{
         try {
-            const response = await ListingModel.updateMany(
+            const response = await NotificationModel.updateMany(
                 {user_to: req.params.username}, 
-                {$set: {seen: true}}
+                {seen: true}
             )
 
             res.status(200).json({message: 'success'})

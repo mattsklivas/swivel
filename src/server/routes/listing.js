@@ -5,8 +5,12 @@ const router = express.Router()
 
 // Import the Listing data model
 const ListingModel = require('../definitions/listing')
+
 // Import the User data model
 const UserModel = require('../definitions/user')
+
+// Import the Notification data model
+const NotificationModel = require('../definitions/notification')
 
 function routes(app) {
     // Return all listings
@@ -94,7 +98,21 @@ function routes(app) {
             // Update offer with new listings
             const updateListing = await ListingModel.updateOne(
                 {_id: req.body.listing_id}, 
-                {$set: {offers: offerArray[0].offers}})                             
+                {$set: {offers: offerArray[0].offers}})
+                
+            // Create an offer notification
+            const listingUserTo = await ListingModel.findOne({_id: req.body.listing_id})
+            const listingUserFrom = await ListingModel.findOne({_id: req.body.offer_id})
+            const notification = await new NotificationModel({
+                user_to: listingUserTo.creator,
+                user_from: listingUserFrom.creator,
+                user_listing_id: listingUserTo._id,
+                user_listing_title: listingUserTo.title,
+                user_from_listing_id: listingUserFrom._id,
+                user_from_listing_title: listingUserFrom.title,
+                type: 'offer'
+            }).save()
+
             res.status(200).json(updateListing)      
         }catch(err){
             res.status(500).json({message: err})
@@ -110,6 +128,20 @@ function routes(app) {
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
                 {$pullAll: {offers: [req.body.offerID]}})
+
+            // Create an rescind notification
+            const listingUserTo = await ListingModel.findOne({_id: req.params.listingID})
+            const listingUserFrom = await ListingModel.findOne({_id: req.body.offerID})
+            const notification = await new NotificationModel({
+                user_to: listingUserTo.creator,
+                user_from: listingUserFrom.creator,
+                user_listing_id: listingUserTo._id,
+                user_listing_title: listingUserTo.title,
+                user_from_listing_id: listingUserFrom._id,
+                user_from_listing_title: listingUserFrom.title,
+                type: 'rescind'
+            }).save()
+
             res.status(200).json(updateListing)
         }catch(err){
             res.status(500).json({message: err})
@@ -122,7 +154,21 @@ function routes(app) {
         try {
             const updateListing = await ListingModel.updateOne(
                 {_id: req.body.listing_id}, 
-                {$set: {accepted: req.body.accepted_id}})                             
+                {$set: {accepted: req.body.accepted_id}})   
+            
+            // Create an accept notification
+            const listingUserTo = await ListingModel.findOne({_id: req.body.listing_id})
+            const listingUserFrom = await ListingModel.findOne({_id: req.body.accepted_id})
+            const notification = await new NotificationModel({
+                user_to: listingUserTo.creator,
+                user_from: listingUserFrom.creator,
+                user_listing_id: listingUserTo._id,
+                user_listing_title: listingUserTo.title,
+                user_from_listing_id: listingUserFrom._id,
+                user_from_listing_title: listingUserFrom.title,
+                type: 'accept'
+            }).save()
+
             res.status(200).json(updateListing)      
         }catch(err){
             res.status(500).json({message: err})

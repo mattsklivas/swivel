@@ -65,8 +65,8 @@ export default function Listing({accessToken}) {
                         setCanSave(false)
                     }
 
-                    // Update the offer state
-                    let offer = listing.offers.find(element => userListings.reduce((prev, curr) => { return prev.concat(curr._id) }, []).includes(element))
+                    // Update the offer 
+                    let offer = listing.offers.reduce((prev, cur) => userListings.some((x) => x._id === cur._id) ? cur._id : prev,[])
                     if (offer) {
                         setOfferID(offer)
                     }

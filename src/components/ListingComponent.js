@@ -161,7 +161,7 @@ export default function ListingComponent(props) {
                                 </div>
                             }
                             <Space direction="horizontal" size={0} style={{paddingTop: 5}}>
-                                <Button style={{margin: '0 5px 0 5px'}} onClick={() => {router.push(`/listing/${listing._id}`)}}>View Listing</Button>
+                                <Button style={{margin: '0 5px 0 0'}} onClick={() => {router.push(`/listing/${listing._id}`)}}>View Listing</Button>
                                 {user.nickname !== listing.creator ? !isSaved ?
                                     <Button style={{margin: '0 5px 0 5px'}} onClick={saveListing}>Save Listing</Button>
                                     :
@@ -169,8 +169,8 @@ export default function ListingComponent(props) {
                                     :
                                     ''
                                 }
-                                {canOffer && canRescind && <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => rescindOffer()}>Rescind Offer</Button>}
-                                {canOffer && !canRescind && <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => setIsModalOpen(true)}>Make Offer</Button>}
+                                {user.nickname !== listing.creator && canOffer && canRescind && <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => rescindOffer()}>Rescind Offer</Button>}
+                                {user.nickname !== listing.creator && canOffer && !canRescind && <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => setIsModalOpen(true)}>Make Offer</Button>}
                                 {enableAccept && <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={acceptOffer}>Accept Offer</Button>}
                             </Space>
                         </Space>

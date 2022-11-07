@@ -73,7 +73,7 @@ app.prepare().then(() => {
 
     // Include route for notification redirect
     const notificationRedirect = require('./routes/notification')
-    server.use('/api/notif', notificationRedirect(server))
+    server.use('/api/notification', notificationRedirect(server))
     
     // Obtain any route and handle the request
     server.get('*', (req, res) => handle(req, res))

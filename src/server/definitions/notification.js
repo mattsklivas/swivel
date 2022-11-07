@@ -15,32 +15,37 @@ const NotificationSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    // Listing ID of the user which the notification belongs to
     user_listing_id: { 
         type: String,
         required: true,
         trim: true
     },
+    // Listing title of the user which the notification belongs to
     user_listing_title: { 
         type: String,
         required: true,
         trim: true
     },
+    // Listing ID of the user which initiated the notification
     user_from_listing_id: { 
         type: String,
         required: true,
         trim: true
     },
+    // Listing title of the user which initiated the notification
     user_from_listing_title: { 
         type: String,
         required: true,
         trim: true
     },
-    // Notification type (either 'offer' or 'accepted')
+    // Notification type (either 'offer', 'rescind' or 'accepted')
     type: {
         type: String,
         required: true,
         trim: true
     },
+    // Flag for whether the notification has been seen or not
     seen: {
         type: Boolean,
         default: false
