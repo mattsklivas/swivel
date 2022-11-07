@@ -1,7 +1,7 @@
 // Import React and Antd elements
 import { React, useState, useEffect } from 'react'
 import { Col, Row, Dropdown, Menu, Space, Badge} from 'antd'
-import { UserOutlined, NotificationOutlined, MessageOutlined, PlusCircleOutlined } from '@ant-design/icons'
+import { UserOutlined, NotificationOutlined, PlusCircleOutlined } from '@ant-design/icons'
 import Link from 'next/link'
 import Image from 'next/image'
 import CreateModal from './modals/CreateModal'
@@ -141,9 +141,6 @@ function HeaderComponent(props) {
                     <div style={{display: 'flex', justifyContent: 'right', paddingRight: '15px', paddingTop: '8px'}}>
                         <Space size={15}>
                             <PlusCircleOutlined style={{ fontSize: 20, color: 'white' }} onClick={showCreateModal}/>
-                            <Link href="/">
-                                <MessageOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
-                            </Link>
                             <Dropdown 
                                 disabled={!initialized}  
                                 placement="bottomRight"
