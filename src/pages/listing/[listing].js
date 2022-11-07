@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable object-shorthand */
 /* eslint-disable quotes */
-// Import React
 import { React, useState, useEffect } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { useRouter } from 'next/router'
@@ -11,7 +12,6 @@ import { EyeInvisibleOutlined, TeamOutlined, UserOutlined, CalendarOutlined, App
 import auth0 from '../../../auth/auth0'
 import LoadingComponent from '../../components/LoadingComponent'
 import HeaderComponent from '../../components/HeaderComponent'
-// import OfferModal from '../../components/OfferModal'
 import EditListingModal from '../../components/modals/EditListingModal'
 import ListComponent from '../../components/ListComponent'
 import useListing from '../../hooks/useListing'
@@ -173,21 +173,18 @@ export default function Listing({accessToken}) {
         setShowUpdateModal(true)
     }
 
-    function DisplayImage() {
-        if(listing?.details?.image)
-        {
+    const displayImage = () => {
+        if(listing?.details?.image) {
             return (
                 <div>
                     <img style={{ width: 200, height: 200, borderRadius: 5}} src={`data:image/jpeg;base64,${listing.details.image}`} />
                 </div>
             )
-        }
-        else
-        {
+        } else {
             return (
                 <div>
-                   <EyeInvisibleOutlined style={{justifyContent: 'center', fontSize: 20, alignItems: 'center', display: 'flex'}}/>
-                   <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
+                    <EyeInvisibleOutlined style={{justifyContent: 'center', fontSize: 20, alignItems: 'center', display: 'flex'}}/>
+                    <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
                 </div>
             )
         }
@@ -202,9 +199,9 @@ export default function Listing({accessToken}) {
                 <HeaderComponent user={user}/>
                 <div style={{backgroundColor: 'white', width: '95%', height: 'auto', borderRadius: '15px', padding: '5vh 5vh 3vh 5vh', marginLeft: 'auto', marginRight: 'auto'}}>
                     <Space size={25} align="start">
-                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200, width: 200, borderRadius: 5, border: '2px solid grey', backgroundColor: '#FFFFFF'}}> 
-                            {DisplayImage()}
-                    </div>
+                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200, width: 200, borderRadius: 5, border: '2px solid grey', backgroundColor: '#FFFFFF'}}> 
+                            {displayImage()}
+                        </div>
                         <Space direction="horizontal" align="start">
                             <Space direction="vertical" align="start">
                                 <span style={{fontSize: '25px', fontWeight: 600}}>{listing.details.title}</span>

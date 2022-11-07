@@ -16,21 +16,20 @@ function EditListingModal(props) {
     // Loading state variables
     const [isLoading, setIsLoading] = useState(false)
 
-    const handleUpload = ({ fileList }) => {setfile({ fileList: fileList })};
+    const handleUpload = ({ fileList }) => {setfile({ fileList: fileList })}
 
     const handleSubmit = async (formData) => {
         setIsLoading(true)
-        const form = new FormData();
-        form.append("title", formData.title ? formData.title : listing.title ? listing.title : '')
-        form.append("category", formData.category ? formData.category : listing.category ? listing.category : '')
-        form.append("description", formData.description ? formData.description : listing.description ? listing.description : '')
-        if(file?.fileList[0]?.originFileObj)
-        {
-            form.append("image", file.fileList[0].originFileObj)
+        const formSubmit = new FormData()
+        formSubmit.append('title', formData.title ? formData.title : listing.title ? listing.title : '')
+        formSubmit.append('category', formData.category ? formData.category : listing.category ? listing.category : '')
+        formSubmit.append('description', formData.description ? formData.description : listing.description ? listing.description : '')
+        if (file?.fileList[0]?.originFileObj) {
+            formSubmit.append('image', file.fileList[0].originFileObj)
         }
         await fetcher(props.token, `api/listing/${listing._id}`, {
             method: 'PATCH',
-            body: form
+            body: formSubmit
         })
         .then( () => {
             router.reload(window.location.pathname)
@@ -81,7 +80,7 @@ function EditListingModal(props) {
                     <Input.TextArea autoSize={{ minRows: 4, maxRows: 6 }}/>
                 </Form.Item>
                 <Form.Item label="Upload" value="image">
-                    <Upload fileList={file.fileList} onChange={handleUpload} beforeUpload={(file)=>{return false}} listType="picture-card">
+                    <Upload fileList={file.fileList} onChange={handleUpload} beforeUpload={() => {return false}} listType="picture-card">
                         <div>
                             <PlusOutlined />
                             <div style={{ marginTop: 8 }}>Upload</div>

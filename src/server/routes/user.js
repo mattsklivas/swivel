@@ -3,16 +3,18 @@ const express = require('express')
 // Get the express Router object
 const router = express.Router()
 
+// For File Base64 and upload
+const multer = require('multer')
+
 // Import the User data model
 const UserModel = require('../definitions/user')
 
 // Import the Listing data model
 const ListingModel = require('../definitions/listing')
 
-// For File Base64 and upload
-const multer = require('multer'); // multer import
-storage = multer.memoryStorage(); //store files temp. in memory for base64 conversion
-const upload = multer({ storage }); // define upload
+// Store files temp. in memory for base64 conversion
+const storage = multer.memoryStorage()
+const upload = multer({ storage }) // Define upload
 
 function routes(app) {
     // Get the profile details of a specific user
@@ -36,7 +38,7 @@ function routes(app) {
             // Update one
             const updatedUser = await UserModel.updateOne(
                 {username: req.params.nickname}, 
-                {$set: {location: req.body.location, fname: req.body.fname, lname: req.body.lname, description: req.body.description, avatar: req.file.buffer.toString("base64")}}
+                {$set: {location: req.body.location, fname: req.body.fname, lname: req.body.lname, description: req.body.description, avatar: req.file.buffer.toString('base64')}}
             )
             res.status(200).json(updatedUser)
         } catch(err) {

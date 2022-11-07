@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable quotes */
@@ -124,21 +126,18 @@ export default function ListingComponent(props) {
         })
     }
 
-    function DisplayImage() {
-        if(listing?.image)
-        {
+    const displayImage = () => {
+        if(listing?.image) {
             return (
                 <div>
                     <img style={{ width: 200, height: 200, borderRadius: 5}} src={`data:image/jpeg;base64,${listing.image}`} />
                 </div>
             )
-        }
-        else
-        {
+        } else {
             return (
                 <div>
-                   <EyeInvisibleOutlined style={{justifyContent: 'center', fontSize: 20, alignItems: 'center', display: 'flex'}}/>
-                   <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
+                    <EyeInvisibleOutlined style={{justifyContent: 'center', fontSize: 20, alignItems: 'center', display: 'flex'}}/>
+                    <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
                 </div>
             )
         }
@@ -149,7 +148,7 @@ export default function ListingComponent(props) {
             <div style={{backgroundColor: 'white', borderRadius: '15px', border: sourceListing?.accepted === listing._id ? '3px solid #13c2c2' : '1px solid #DEDEDE', padding: '5vh', marginLeft: 'auto', marginRight: 'auto', marginBottom: 10}}>
                 <Space size={25} align="start">
                     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200, width: 200, borderRadius: 5, border: '2px solid grey', backgroundColor: '#FFFFFF'}}>
-                        {DisplayImage()}
+                        {displayImage()}
                     </div>
                     <Space direction="horizontal" align="start">
                         <Space direction="vertical" align="start">

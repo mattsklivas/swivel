@@ -13,26 +13,24 @@ function EditProfileModal(props) {
     const userDetails = props.userDetails
     const [file, setfile] = useState({fileList: []})
 
-    const handleUpload = ({ fileList }) => {setfile({ fileList: fileList })};
+    const handleUpload = ({ fileList }) => {setfile({ fileList: fileList })}
 
     // Loading state variables
     const [isLoading, setIsLoading] = useState(false)
 
     const handleSubmit = async (formData) => {
-        const form = new FormData();
-        form.append("fname", formData.fname ? formData.fname : userDetails.fname ? userDetails.fname : '')
-        form.append("lname", formData.lname ? formData.lname : userDetails.lname ? userDetails.lname : '')
-        form.append("location", formData.location ? formData.location : userDetails.location ? userDetails.location : '')
-        form.append("description", formData.description ? formData.description : userDetails.description ? userDetails.description : '')
-        if(file?.fileList[0]?.originFileObj)
-        {
-            form.append("avatar", file.fileList[0].originFileObj)
-            console.log("form value for image: " + file.fileList[0].originFileObj)
+        const formSubmit = new FormData()
+        formSubmit.append('fname', formData.fname ? formData.fname : userDetails.fname ? userDetails.fname : '')
+        formSubmit.append('lname', formData.lname ? formData.lname : userDetails.lname ? userDetails.lname : '')
+        formSubmit.append('location', formData.location ? formData.location : userDetails.location ? userDetails.location : '')
+        formSubmit.append('description', formData.description ? formData.description : userDetails.description ? userDetails.description : '')
+        if(file?.fileList[0]?.originFileObj) {
+            formSubmit.append('avatar', file.fileList[0].originFileObj)
         }
         setIsLoading(true)
         await fetcher(props.token, `api/user/profile/${nickname}`, {
             method: 'PATCH',
-            body: form
+            body: formSubmit
         })
         .then( () => {
             router.reload(window.location.pathname)
@@ -71,7 +69,7 @@ function EditProfileModal(props) {
                     <Input.TextArea defaultValue={userDetails.description || ''} autoSize={{ minRows: 4, maxRows: 6 }}/>
                 </Form.Item>
                 <Form.Item label="Upload" value="avatar">
-                    <Upload value="avatar" fileList={file.fileList} onChange={handleUpload} beforeUpload={(file)=>{return false}} listType="picture-card">
+                    <Upload value="avatar" fileList={file.fileList} onChange={handleUpload} beforeUpload={() => {return false}} listType="picture-card">
                         <div>
                             <PlusOutlined />
                             <div style={{ marginTop: 8 }}>Upload</div>
