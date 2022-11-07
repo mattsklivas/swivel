@@ -2,7 +2,6 @@
 import { React, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Input, Upload, Modal, Form, Select } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
 import fetcher from '../../helpers/fetcher'
 import { CATEGORIES } from '../../helpers/categories'
 
@@ -81,10 +80,7 @@ function EditListingModal(props) {
                 </Form.Item>
                 <Form.Item label="Upload" value="image">
                     <Upload fileList={file.fileList} onChange={handleUpload} beforeUpload={() => {return false}} listType="picture-card">
-                        <div>
-                            <PlusOutlined />
-                            <div style={{ marginTop: 8 }}>Upload</div>
-                        </div>
+                        {file.fileList.length < 1 && '+ Upload'}
                     </Upload>
                 </Form.Item>
             </Form>

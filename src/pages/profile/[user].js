@@ -52,14 +52,16 @@ export default function Profile({accessToken}) {
         if(userDetails?.details?.avatar) {
             return (
                 <div>
-                    <img style={{display: 'flex', width: 200, height: 200, borderRadius: 5, aspectRatio: 9/2}} src={`data:image/jpeg;base64,${userDetails.details.avatar}`} />
+                    <img style={{display: 'flex', width: 195, height: 195, borderRadius: 5, objectFit: 'cover'}} src={`data:image/jpeg;base64,${userDetails.details.avatar}`} />
                 </div>
             )
         } else {
             return (
-                <div>
-                    <EyeInvisibleOutlined style={{justifyContent: 'center', fontSize: 20, alignItems: 'center', display: 'flex'}}/>
-                    <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Image Not Available</span>
+                <div style={{paddingLeft: '20%'}}>
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '65%'}}>
+                        <EyeInvisibleOutlined style={{fontSize: 20}}/>
+                    </div>
+                    <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Avatar Not Found</span>
                 </div>
             )
         }

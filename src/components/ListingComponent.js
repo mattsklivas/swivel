@@ -130,7 +130,7 @@ export default function ListingComponent(props) {
         if(listing?.image) {
             return (
                 <div>
-                    <img style={{ width: 200, height: 200, borderRadius: 5}} src={`data:image/jpeg;base64,${listing.image}`} />
+                    <img style={{ width: 200, height: 200, borderRadius: 5, objectFit: 'cover'}} src={`data:image/jpeg;base64,${listing.image}`} />
                 </div>
             )
         } else {

@@ -2,7 +2,6 @@
 import { React, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Input, Upload, Modal, Form } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
 import fetcher from '../../helpers/fetcher'
 
 function EditProfileModal(props) {
@@ -70,10 +69,7 @@ function EditProfileModal(props) {
                 </Form.Item>
                 <Form.Item label="Upload" value="avatar">
                     <Upload value="avatar" fileList={file.fileList} onChange={handleUpload} beforeUpload={() => {return false}} listType="picture-card">
-                        <div>
-                            <PlusOutlined />
-                            <div style={{ marginTop: 8 }}>Upload</div>
-                        </div>
+                        {file.fileList.length < 1 && '+ Upload'}
                     </Upload>
                 </Form.Item>
             </Form>
