@@ -7,7 +7,7 @@ const router = express.Router()
 const ListingModel = require('../definitions/listing')
 // For File Base64 and upload
 const multer = require('multer') // multer import
-storage = multer.memoryStorage() //store files temp. in memory for base64 conversion
+const storage = multer.memoryStorage() //store files temp. in memory for base64 conversion
 const upload = multer({ storage }) // define upload
 // Import the User data model
 const UserModel = require('../definitions/user')
@@ -76,15 +76,22 @@ function routes(app) {
     // param: listingID is the record to be updated
     // body: title as string, category as string, description as string
     router.patch('/:listingID',  upload.single('image'),  async(req, res) => {
+        var imageData = ''
+        if(req?.file)
+        {
+            imageData = req.file.buffer.toString("base64")
+        }
+        
         try {
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
-                {$set: {title: req.body.title, category: req.body.category, description: req.body.description, image: req.file.buffer.toString("base64")}}
+                {$set: {title: req.body.title, category: req.body.category, description: req.body.description, image: imageData}}
             )
             res.status(200).json(updateListing)
         } catch(err) {
             res.status(500).json({message: err})
         }
+        
     })
 
     // Add an offer to a listing

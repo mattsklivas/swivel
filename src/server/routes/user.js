@@ -33,10 +33,15 @@ function routes(app) {
     // Update a user's profile details
     router.patch('/profile/:nickname', upload.single('avatar') , async(req, res) => {
         try {
+            var imageData = ''
+            if(req?.file)
+            {
+                imageData = req.file.buffer.toString("base64")
+            }
             // Update one
             const updatedUser = await UserModel.updateOne(
                 {username: req.params.nickname}, 
-                {$set: {location: req.body.location, fname: req.body.fname, lname: req.body.lname, description: req.body.description, avatar: req.file.buffer.toString("base64")}}
+                {$set: {location: req.body.location, fname: req.body.fname, lname: req.body.lname, description: req.body.description, avatar: imageData}}
             )
             res.status(200).json(updatedUser)
         } catch(err) {
