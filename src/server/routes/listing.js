@@ -3,12 +3,6 @@ const express = require('express')
 // Get the express Router object
 const router = express.Router()
 
-// For File Base64 and upload
-const multer = require('multer')
-
-// Store files temp. in memory for base64 conversion
-const storage = multer.memoryStorage()
-const upload = multer({ storage }) // Define upload
 
 // Import the Listing data model
 const ListingModel = require('../definitions/listing')
