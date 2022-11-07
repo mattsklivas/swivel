@@ -35,12 +35,12 @@ export default function (token, url, options) {
 
                 const json = await response.json()
 
-                if (dev) {
-                    notification.open({
-                        type: 'success',
-                        description: response.statusText,
-                    })
-                }
+                // if (dev) {
+                //     notification.open({
+                //         type: 'success',
+                //         description: response.statusText,
+                //     })
+                // }
 
                 return resolve(json)
             })

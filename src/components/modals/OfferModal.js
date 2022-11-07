@@ -14,6 +14,7 @@ function OfferModal(props) {
 
     // Make offer
     const handleSubmit = async () => {
+        let offerID = value
         await fetcher(props.token, 'api/listing/offer', {
             method: 'PUT',
             headers: {
@@ -21,22 +22,22 @@ function OfferModal(props) {
             },
             body: JSON.stringify({
                 listing_id: listing._id,
-                offer_id: value
+                offer_id: offerID
             }),
         })
         .then( () => {
             setVisible(false)
-            props.hideOfferModal()
+            props.hideOfferModal(offerID)
         })
         .catch(() => { 
             setVisible(false)
-            props.hideOfferModal()
+            props.hideOfferModal('')
         })
     }
     
     const handleCancel = () => {
         setVisible(false)
-        props.hideOfferModal()
+        props.hideOfferModal('')
     }
 
     // Change selected value

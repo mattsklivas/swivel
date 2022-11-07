@@ -31,7 +31,7 @@ export default function ListComponent(props) {
                             <ListingComponent 
                                 key={i} 
                                 listing={listing} 
-                                showCategory={false} 
+                                showCategory
                                 user={user} 
                                 saved={saved} 
                                 userListings={userListings} 
@@ -48,7 +48,7 @@ export default function ListComponent(props) {
                             <ListingComponent 
                                 key={i} 
                                 listing={listing} 
-                                showCategory={true} 
+                                showCategory 
                                 user={user} 
                                 saved={saved} 
                                 userListings={userListings} 

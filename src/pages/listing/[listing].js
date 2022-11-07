@@ -17,6 +17,7 @@ import ListComponent from '../../components/ListComponent'
 import useListing from '../../hooks/useListing'
 import useUserListings from '../../hooks/useUserListings'
 import useUserDetails from '../../hooks/useUserDetails'
+import OfferModal from '../../components/modals/OfferModal'
 import fetcher from '../../helpers/fetcher'
 import { CATEGORIES } from '../../helpers/categories'
 
@@ -29,8 +30,6 @@ export default function Listing({accessToken}) {
     // Get the listing id from the listing page
     const queryKey = 'listing'
     const listingID = router.query[queryKey] || router.asPath.match(new RegExp(`[&?]${queryKey}=(.*)(&|$)`))
-
-    const [isModalOpen, setIsModalOpen] = useState(false)
     
     // Get the listing details
     const { data: listing } = useListing(listingID || '', token)
@@ -40,6 +39,12 @@ export default function Listing({accessToken}) {
 
     // Get the logged-in user's details
     const { data: userDetails } = useUserDetails(user ? user.nickname : '', token)
+
+    // User's current offer made
+    const [offerID, setOfferID] = useState('')
+
+    // Flag for whether a user can save an offer
+    const [canSave, setCanSave] = useState(false)
 
     // Flag to check if hooks have completed
     const [initialized, setInitialized] = useState(false)
@@ -51,6 +56,22 @@ export default function Listing({accessToken}) {
                 // Redirect for unknown listing
                 router.push('/')
             } else {
+                // If user is on a different user's listing page
+                if (listing.details.creator !== user.nickname) {
+                    // Set canSave flag
+                    if (userDetails.saved.reduce((previous, current) => {return previous.concat(current._id)}, []).includes(listing._id)) {
+                        setCanSave(true)
+                    } else {
+                        setCanSave(false)
+                    }
+
+                    // Update the offer 
+                    let offer = listing.offers.reduce((prev, cur) => userListings.some((x) => x._id === cur._id) ? cur._id : prev,[])
+                    if (offer) {
+                        setOfferID(offer)
+                    }
+                }
+
                 setInitialized(true)
             }
         }
@@ -62,6 +83,9 @@ export default function Listing({accessToken}) {
 
     // Update listing state variable
     const [showUpdateModal, setShowUpdateModal] = useState(false)
+
+    // Offer modal state
+    const [isOfferModalOpen, setIsOfferModalOpen] = useState(false)
 
     // Show delete confirmation
     const showDeleteConfirm = () => {
@@ -86,6 +110,56 @@ export default function Listing({accessToken}) {
         .catch(() => { 
             setOpenConfirm(false)
             setConfirmLoading(false)
+        })
+    }
+
+    // Add listing to user's saved listings
+    const saveListing = async () => {
+        await fetcher(token, `api/user/save_listing`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: user.nickname,
+                listing_id: listing._id
+            }),
+        })
+        .then( () => {
+            setCanSave(false)
+        })
+    }
+
+    // Remove listing from user's saved listings
+    const unsaveListing = async () => {
+        await fetcher(token, `api/user/unsave_listing`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: user.nickname,
+                listing_id: listing._id
+            }),
+        })
+        .then( () => {
+            setCanSave(true)
+        })
+    }
+
+    // Rescind an offer
+    const rescindOffer = async () => {
+        await fetcher(token, `api/listing/offer/delete/${listing.details._id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                offerID: offerID
+            }),
+        })
+        .then( () => {
+            setOfferID('')
         })
     }
 
@@ -152,7 +226,7 @@ export default function Listing({accessToken}) {
                                     <AppstoreOutlined style={{fontSize: 20}}/>
                                     <span style={{paddingLeft: 5}}>{CATEGORIES[listing.details.category]}</span>
                                 </div>
-                                { listing.details.creator === user.nickname &&
+                                { listing.details.creator === user.nickname ?
                                     <Space direction="horizontal" align="start">
                                         <Button onClick={handleShowUpdateModal}>Modify</Button>
                                         <Popconfirm
@@ -164,6 +238,19 @@ export default function Listing({accessToken}) {
                                         >
                                             <Button danger type="primary" onClick={showDeleteConfirm} loading={confirmLoading}>Delete</Button>
                                         </Popconfirm>
+                                    </Space>
+                                    :
+                                    <Space direction="horizontal" align="start">
+                                        {canSave ?
+                                            <Button onClick={saveListing}>Save Listing</Button>
+                                            :
+                                            <Button onClick={unsaveListing}>Unsave Listing</Button>
+                                        }
+                                        {offerID ? 
+                                            <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => rescindOffer()}>Rescind Offer</Button>
+                                            :
+                                            <Button style={{margin: '0 5px 0 5px'}} type="primary" onClick={() => setIsOfferModalOpen(true)}>Make Offer</Button>
+                                        }
                                     </Space>
                                 }
                             </Space>
@@ -231,6 +318,17 @@ export default function Listing({accessToken}) {
                         />
                     }
                     { showUpdateModal && <EditListingModal hideModal={() => {setShowUpdateModal(false)}} listing={listing.details} token={token} />}
+                    {isOfferModalOpen && 
+                        <OfferModal 
+                            hideOfferModal={(offerMade) => {
+                                if (offerMade) {
+                                    setOfferID(offerMade)
+                                }
+                                setIsOfferModalOpen(false)
+                            }}
+                            listing={listing.details} 
+                            userListings={userListings.filter(item => !listing.offers.includes(item._id))} token={token}/>
+                    }
                 </div>
                 <div style={{height: 30}}/>
             </>

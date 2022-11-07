@@ -70,6 +70,10 @@ app.prepare().then(() => {
     // Include route for registration redirect
     const registerRedirect = require('./routes/register')
     server.use('/api/register', registerRedirect(server))
+
+    // Include route for notification redirect
+    const notificationRedirect = require('./routes/notification')
+    server.use('/api/notification', notificationRedirect(server))
     
     // Obtain any route and handle the request
     server.get('*', (req, res) => handle(req, res))

@@ -3,14 +3,21 @@ const express = require('express')
 // Get the express Router object
 const router = express.Router()
 
+// For File Base64 and upload
+const multer = require('multer')
+
+// Store files temp. in memory for base64 conversion
+const storage = multer.memoryStorage()
+const upload = multer({ storage }) // Define upload
+
 // Import the Listing data model
 const ListingModel = require('../definitions/listing')
-// For File Base64 and upload
-const multer = require('multer') // multer import
-storage = multer.memoryStorage() //store files temp. in memory for base64 conversion
-const upload = multer({ storage }) // define upload
+
 // Import the User data model
 const UserModel = require('../definitions/user')
+
+// Import the Notification data model
+const NotificationModel = require('../definitions/notification')
 
 function routes(app) {
     // Return all listings
@@ -51,19 +58,19 @@ function routes(app) {
 
     // Create a listing
     // Body: creator as string, category as string, title as string, description as string
-  router.post('/create', upload.single('image') , async (req, res) => {
-    try {
-      // Build the listing object
-      const listing = new ListingModel({
-        creator: req.body.creator,
-        category: req.body.category,
-        title: req.body.title,
-        description: req.body.description
-        })  
-        if(req.file != null)
-        {
-            listing.image = req.file.buffer.toString("base64")
-        }
+    router.post('/create', upload.single('image') , async (req, res) => {
+        try {
+            // Build the listing object
+            const listing = new ListingModel({
+                creator: req.body.creator,
+                category: req.body.category,
+                title: req.body.title,
+                description: req.body.description
+            })  
+            
+            if (req.file != null) {
+                listing.image = req.file.buffer.toString('base64')
+            }
             const savedListing = await listing.save()
 
             res.status(200).json({id: savedListing._id.toString()})
@@ -79,7 +86,7 @@ function routes(app) {
         try {
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
-                {$set: {title: req.body.title, category: req.body.category, description: req.body.description, image: req.file.buffer.toString("base64")}}
+                {$set: {title: req.body.title, category: req.body.category, description: req.body.description, image: req.file.buffer.toString('base64')}}
             )
             res.status(200).json(updateListing)
         } catch(err) {
@@ -102,7 +109,21 @@ function routes(app) {
             // Update offer with new listings
             const updateListing = await ListingModel.updateOne(
                 {_id: req.body.listing_id}, 
-                {$set: {offers: offerArray[0].offers}})                             
+                {$set: {offers: offerArray[0].offers}})
+                
+            // Create an offer notification
+            const listingUserTo = await ListingModel.findOne({_id: req.body.listing_id})
+            const listingUserFrom = await ListingModel.findOne({_id: req.body.offer_id})
+            const notification = await new NotificationModel({
+                user_to: listingUserTo.creator,
+                user_from: listingUserFrom.creator,
+                user_listing_id: listingUserTo._id,
+                user_listing_title: listingUserTo.title,
+                user_from_listing_id: listingUserFrom._id,
+                user_from_listing_title: listingUserFrom.title,
+                type: 'offer'
+            }).save()
+
             res.status(200).json(updateListing)      
         }catch(err){
             res.status(500).json({message: err})
@@ -112,12 +133,26 @@ function routes(app) {
     // Remove offers from a listing
     // Body: listingID is the current listing for which to delete an offer
     // offerID is the offer ID (string) that you want to remove
-    router.patch('/deleteOffer/:listingID', async(req,res) => {
+    router.patch('/offer/delete/:listingID', async(req,res) => {
         try {
             // $pullAll removes all instance of the value from the array
             const updateListing = await ListingModel.updateOne(
                 {_id: req.params.listingID}, 
                 {$pullAll: {offers: [req.body.offerID]}})
+
+            // Create an rescind notification
+            const listingUserTo = await ListingModel.findOne({_id: req.params.listingID})
+            const listingUserFrom = await ListingModel.findOne({_id: req.body.offerID})
+            const notification = await new NotificationModel({
+                user_to: listingUserTo.creator,
+                user_from: listingUserFrom.creator,
+                user_listing_id: listingUserTo._id,
+                user_listing_title: listingUserTo.title,
+                user_from_listing_id: listingUserFrom._id,
+                user_from_listing_title: listingUserFrom.title,
+                type: 'rescind'
+            }).save()
+
             res.status(200).json(updateListing)
         }catch(err){
             res.status(500).json({message: err})
@@ -130,7 +165,21 @@ function routes(app) {
         try {
             const updateListing = await ListingModel.updateOne(
                 {_id: req.body.listing_id}, 
-                {$set: {accepted: req.body.accepted_id}})                             
+                {$set: {accepted: req.body.accepted_id}})   
+            
+            // Create an accept notification
+            const listingUserTo = await ListingModel.findOne({_id: req.body.listing_id})
+            const listingUserFrom = await ListingModel.findOne({_id: req.body.accepted_id})
+            const notification = await new NotificationModel({
+                user_to: listingUserTo.creator,
+                user_from: listingUserFrom.creator,
+                user_listing_id: listingUserTo._id,
+                user_listing_title: listingUserTo.title,
+                user_from_listing_id: listingUserFrom._id,
+                user_from_listing_title: listingUserFrom.title,
+                type: 'accept'
+            }).save()
+
             res.status(200).json(updateListing)      
         }catch(err){
             res.status(500).json({message: err})
@@ -165,7 +214,7 @@ function routes(app) {
                     await UserModel.updateOne(
                         {_id: user._id}, 
                         {$pullAll: {saved_listings: [req.params.listingID]}})
-                }                 
+                }
             })
             res.status(200).json(removeListing)
         } catch(err) {

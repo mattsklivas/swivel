@@ -1,11 +1,13 @@
 // Import React and Antd elements
-import { React, useState } from 'react'
-import { Col, Row, Dropdown, Menu, Space} from 'antd'
+import { React, useState, useEffect } from 'react'
+import { Col, Row, Dropdown, Menu, Space, Badge} from 'antd'
 import { UserOutlined, NotificationOutlined, MessageOutlined, PlusCircleOutlined } from '@ant-design/icons'
 import Link from 'next/link'
 import Image from 'next/image'
 import CreateModal from './modals/CreateModal'
 import logo from '../../public/icon.svg'
+import useNotification from '../hooks/useNotification'
+import fetcher from '../helpers/fetcher'
 
 function HeaderComponent(props) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -15,6 +17,73 @@ function HeaderComponent(props) {
     const showCreateModal = () => {
         setIsCreateModalOpen(true)
     }
+
+    // Get the user's notifications
+    const { data: notifications } = useNotification(props?.user?.nickname, token)
+
+    // Flag to check if hook has completed
+    const [initialized, setInitialized] = useState(false)
+
+    // Notifications dropdown content
+    const [notificationDropdown, setNotificationDropdown] = useState([])
+
+    // Flag to prevent the marking of notifications as seen more than once
+    const [isMarkedSeen, setIsMarkedSeen] = useState(false)
+
+    const getDropdownMessage = (notif) => {
+        switch(notif.type) {
+            case 'offer':
+                return (
+                    <div>
+                        <strong style={{color: '#1890ff'}}>{notif.user_from}</strong> has placed an offer for your listing: <strong style={{color: '#1890ff'}}>{`${notif.user_listing_title}`}</strong><br />
+                        <strong style={{color: '#262626'}}>Offer title: </strong><strong style={{color: '#1890ff'}}>{`${notif.user_from_listing_title}`}</strong>
+                    </div>
+                )
+            case 'rescind':
+                return (
+                    <div>
+                        <strong style={{color: '#1890ff'}}>{notif.user_from}</strong> has rescinded an offer for your listing: <strong style={{color: '#1890ff'}}>{`${notif.user_listing_title}`}</strong><br />
+                        <strong style={{color: '#262626'}}>Title of rescinded offer: </strong><strong style={{color: '#1890ff'}}>{`${notif.user_from_listing_title}`}</strong>
+                    </div>
+                )
+            case 'accept':
+                return (
+                    <div>
+                        <strong style={{color: '#1890ff'}}>{notif.user_from}</strong> has accepted your service exchange offer for their listing: <strong style={{color: '#1890ff'}}>{`${notif.user_from_listing_title}`}</strong>
+                    </div>
+                )
+            default: 
+                return 'Unknown notification type'
+        }
+    }
+
+    // Wait to receive notifications before allowing the notifications dropdown to be opened
+    useEffect(() => {
+        if (!initialized && typeof notifications !== 'undefined') {
+            setNotificationDropdown(() => {
+                if (notifications.notifications.length > 0) {
+                    return notifications.notifications.reduce((prev, notif, i) => {
+                        return prev.concat(
+                            {
+                                key: (i + 1).toString(),
+                                label: (
+                                    <Link href={`/listing/${notif.user_from_listing_id}`}>
+                                        {getDropdownMessage(notif)}
+                                    </Link>
+                                ),
+                            }
+                        )
+                    }, [])
+                } else {
+                    return [{
+                        key: '1',
+                        label: <div>No notifications to display</div>,
+                    }]
+                }
+            })
+            setInitialized(true)
+        }
+    })
 
     const ProfileDropdown = (
         <Menu
@@ -39,36 +108,17 @@ function HeaderComponent(props) {
         />
     )
 
-    const NotificationDropdown = (
-        <Menu
-            items={[
-            {
-                key: '1',
-                label: (
-                    <Link href="/">
-                        Clicking this should forward to listing
-                    </Link>
-                ),
-            },
-            {
-                key: '2',
-                label: (
-                    <Link href="/">
-                        Clicking this should forward to listing
-                    </Link>
-                ),
-            },
-            {
-                key: '3',
-                label: (
-                    <Link href="/">
-                        Clicking this should forward to listing
-                    </Link>
-                ),
-            }
-            ]}
-        />
-    )
+    // Mark notifications as seen
+    const markNotificationsSeen = async () => {
+        if (!isMarkedSeen && notifications.notifications.filter(item => !item.seen).length > 0) {
+            await fetcher(token, `api/notification/seen/${user?.nickname}`, {
+                method: 'POST'
+            })
+            .then( () => {
+                setIsMarkedSeen(true)
+            })
+        }
+    }
 
     return (
         <>
@@ -94,8 +144,27 @@ function HeaderComponent(props) {
                             <Link href="/">
                                 <MessageOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
                             </Link>
-                            <Dropdown overlay={NotificationDropdown} placement="bottomRight">
-                                <NotificationOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
+                            <Dropdown 
+                                disabled={!initialized}  
+                                placement="bottomRight"
+                                overlay={
+                                    <Menu
+                                        items={notificationDropdown}
+                                    />
+                                }
+                                onOpenChange={() => markNotificationsSeen()}
+                            >
+                                {initialized ? 
+                                    <Badge 
+                                        count={notifications.notifications.filter(item => !item.seen).length} 
+                                        style={{ position: 'absolute', right: 0, top: 3 }} 
+                                        size="small"
+                                    >
+                                        <NotificationOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
+                                    </Badge>
+                                    :
+                                    <NotificationOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
+                                }
                             </Dropdown>
                             <Dropdown overlay={ProfileDropdown} placement="bottomRight">
                                 <UserOutlined style={{ fontSize: 20, color: 'white', cursor: 'pointer' }}/>
