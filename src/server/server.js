@@ -61,11 +61,11 @@ app.prepare().then(() => {
 
     // Include 'user' routes
     const userRoutes = require('./routes/user')
-    server.use('/api/user', userRoutes(server))
+    server.use('/api/user', jwtCheck, userRoutes(server))
 
     // Include 'listing' routes
     const listingRoutes = require('./routes/listing')
-    server.use('/api/listing', listingRoutes(server))
+    server.use('/api/listing', jwtCheck, listingRoutes(server))
 
     // Include route for registration redirect
     const registerRedirect = require('./routes/register')
@@ -73,7 +73,7 @@ app.prepare().then(() => {
 
     // Include route for notification redirect
     const notificationRedirect = require('./routes/notification')
-    server.use('/api/notification', notificationRedirect(server))
+    server.use('/api/notification', jwtCheck, notificationRedirect(server))
     
     // Obtain any route and handle the request
     server.get('*', (req, res) => handle(req, res))
