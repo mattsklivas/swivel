@@ -2,7 +2,7 @@
 import { notification } from 'antd'
 
 const dev = process.env.NODE_ENV !== 'production'
-const API_URL = process.env.API_URL || 'http://localhost:3000/'
+const API_URL = 'https://swivel-ybll7eabcq-nn.a.run.app/'
 
 // Update request header to include bearer token
 const updateOptions = (token, options) => {

@@ -2,7 +2,7 @@ const withAntdLess = require('next-plugin-antd-less')
 
 module.exports = {
   env: {
-    API_URL: process.env.API_URL || 'http://localhost:3000/'
+    API_URL: 'https://swivel-ybll7eabcq-nn.a.run.app/'
   },
   eslint: {
     dirs: ['src/pages', 'src/components', 'src/hooks', 'src/helpers'

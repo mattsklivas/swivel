@@ -1,8 +1,8 @@
-name: swivel CI testing
+name: swivel CI/CD 
 
 on:
   push:
-    branches: [ tarun ]
+    branches: [ main ]
 
 
 jobs:
@@ -14,18 +14,35 @@ jobs:
         with:
           node-version: 14
       - run: yarn install
-        # add test
+
       - run: yarn build
 
-      - uses: mr-smithers-excellent/docker-build-push@v5
-        name: Docker image Build & push
+      - name: google cloud login
+        uses: google-github-actions/setup-gcloud@v0
         with:
-          image: tarune/sample
-          registry: docker.io
-          tag: latest 
-          #image name is branch/tag
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          project_id: ${{ secrets.GCPPROJECTID }}
+          service_account_key: ${{ secrets.GCPKEY }}
+    
+      - name: docker config 
+        run: gcloud auth configure-docker --quiet
 
-#next step take the docker image from hub and deploy on google cloud
+      - name: docker image build 
+        run: docker build . -t gcr.io/${{ secrets.GCPPROJECTID }}/${{ secrets.NAME }}
+
+      - uses: mr-smithers-excellent/docker-build-push@v5
+        name: save docker image
+        with:
+          image: tarune/swivel
+          registry: docker.io
+          tags: latest 
+          username: ${{ secrets.DOCKERUSERNAME }}
+          password: ${{ secrets.DOCKERPASSWORD }}
+
+      - name: docker image push to container registry
+        run: docker push gcr.io/${{ secrets.GCPPROJECTID }}/${{ secrets.NAME }}
+
+      - name: Deploy image to cloud run
+        run: gcloud run deploy ${{ secrets.GCPPROJECTID }} --image = gcr.io/${{ secrets.GCPPROJECTID }}/${{ secrets.NAME }} --region {northamerica-northeast1} --allow-unauthenticated
+
 # source : https://github.com/mr-smithers-excellent/docker-build-push
+# source : https://github.com/google-github-actions/deploy-cloudrun

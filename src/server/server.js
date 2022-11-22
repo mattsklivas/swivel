@@ -14,17 +14,17 @@ require('dotenv').config()
 // Environment variables
 const PORT = process.env.PORT || 3000
 const dev = process.env.NODE_ENV !== 'production'
-const DB_URL = dev ? 'mongodb://localhost:27017/' : process.env.DATABASE_URL // use 'mongodb://mongo:27017' for docker
+const DB_URL ='mongodb+srv://Team:nBeV2kHKMlbWNYNz@cluster0.yjpa31q.mongodb.net/?retryWrites=true&w=majority'  // use 'mongodb://mongo:27017' for docker
 const AUTH0_ISSUER_BASE_URL = process.env.AUTH0_ISSUER_BASE_URL
 const AUTH0_AUD = process.env.AUTH0_AUD
-const API_URL = process.env.API_URL || 'http://localhost:3000/'
+const API_URL ='https://swivel-ybll7eabcq-nn.a.run.app/'
 
 const jwtCheck = expressJwt({
     secret: jwks.expressJwtSecret({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: 'https://dev-gl5357kx.us.auth0.com/.well-known/jwks.json'
+        jwksUri: 'https://dev-0vyfxcr9.us.auth0.com/.well-known/jwks.json'
         }),
         audience: AUTH0_AUD,
         issuer: AUTH0_ISSUER_BASE_URL,
@@ -34,10 +34,13 @@ const jwtCheck = expressJwt({
 if (dev) {
     // Local connection
     mongoose
-    .connect(DB_URL)
+    .connect(DB_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      })
     // .connect(process.env.MONGO_URI)
     .then(() => {
-        console.log('Connected to local MongoDB instance')
+        console.log('Connected to MongoDB')
     })
     .catch((err) => console.error(`Error: ${err.message}`))
 } else {
