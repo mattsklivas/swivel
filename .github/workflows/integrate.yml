@@ -17,20 +17,8 @@ jobs:
 
       - run: yarn build
 
-      - name: google cloud login
-        uses: google-github-actions/setup-gcloud@v0
-        with:
-          project_id: ${{ secrets.GCPPROJECTID }}
-          service_account_key: ${{ secrets.GCPKEY }}
-    
-      - name: docker config 
-        run: gcloud auth configure-docker --quiet
-
-      - name: docker image build 
-        run: docker build . -t gcr.io/${{ secrets.GCPPROJECTID }}/${{ secrets.NAME }}
-
       - uses: mr-smithers-excellent/docker-build-push@v5
-        name: save docker image
+        name: Buidl and save docker image
         with:
           image: tarune/swivel
           registry: docker.io
@@ -38,11 +26,4 @@ jobs:
           username: ${{ secrets.DOCKERUSERNAME }}
           password: ${{ secrets.DOCKERPASSWORD }}
 
-      - name: docker image push to container registry
-        run: docker push gcr.io/${{ secrets.GCPPROJECTID }}/${{ secrets.NAME }}
-
-      - name: Deploy image to cloud run
-        run: gcloud run deploy ${{ secrets.GCPPROJECTID }} --image = gcr.io/${{ secrets.GCPPROJECTID }}/${{ secrets.NAME }} --region {northamerica-northeast1} --allow-unauthenticated
-
 # source : https://github.com/mr-smithers-excellent/docker-build-push
-# source : https://github.com/google-github-actions/deploy-cloudrun

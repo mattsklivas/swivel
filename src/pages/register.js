@@ -18,7 +18,7 @@ function Register({accessToken}) {
     const state = statevalue.replace('"}','')
 
     // Redirected to this url after registration process
-    const redirect = `https://dev-gl5357kx.us.auth0.com/continue?state=${state}`
+    const redirect = `https://dev-0vyfxcr9.us.auth0.com/continue?state=${state}`
 
     useEffect(() => {
         // Register user in the 
