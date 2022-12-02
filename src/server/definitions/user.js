@@ -1,7 +1,7 @@
 // Import mongoose
 const mongoose = require('mongoose')
 
-// Data model for user login info
+// Data model for users
 const UserSchema = new mongoose.Schema({
     email: {
         type: String,
