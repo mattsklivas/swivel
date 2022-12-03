@@ -20,7 +20,7 @@ jobs:
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build and save docker image
         with:
-          image: tarune/swivel
+          image: mattsklivas/swivel
           registry: docker.io
           tags: latest 
           username: ${{ secrets.DOCKERUSERNAME }}
