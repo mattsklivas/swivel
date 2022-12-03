@@ -8,7 +8,7 @@ COPY package.json yarn.lock ./
 RUN yarn install
 #copy files to container
 COPY . .
-#expose port 3000
-EXPOSE 3000
+#expose port 8080
+EXPOSE 8080
 #perform command to run app 
 CMD ["yarn", "dev-server"]

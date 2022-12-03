@@ -1,0 +1,29 @@
+name: swivel CI/CD 
+
+on:
+  push:
+    branches: [ main ]
+
+
+jobs:
+  test_push_request:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - run: yarn install
+
+      - run: yarn build
+
+      - uses: mr-smithers-excellent/docker-build-push@v5
+        name: Build and save docker image
+        with:
+          image: tarune/swivel
+          registry: docker.io
+          tags: latest 
+          username: ${{ secrets.DOCKERUSERNAME }}
+          password: ${{ secrets.DOCKERPASSWORD }}
+
+# source : https://github.com/mr-smithers-excellent/docker-build-push
