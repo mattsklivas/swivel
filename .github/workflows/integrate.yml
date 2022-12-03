@@ -1,8 +1,8 @@
-name: swivel CI testing
+name: swivel CI/CD 
 
 on:
   push:
-    branches: [ tarun ]
+    branches: [ main ]
 
 
 jobs:
@@ -14,18 +14,16 @@ jobs:
         with:
           node-version: 14
       - run: yarn install
-        # add test
+
       - run: yarn build
 
       - uses: mr-smithers-excellent/docker-build-push@v5
-        name: Docker image Build & push
+        name: Build and save docker image
         with:
-          image: tarune/sample
+          image: mattsklivas/swivel
           registry: docker.io
-          tag: latest 
-          #image name is branch/tag
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          tags: latest 
+          username: ${{ secrets.DOCKERUSERNAME }}
+          password: ${{ secrets.DOCKERPASSWORD }}
 
-#next step take the docker image from hub and deploy on google cloud
 # source : https://github.com/mr-smithers-excellent/docker-build-push
