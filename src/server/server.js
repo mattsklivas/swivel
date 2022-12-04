@@ -24,7 +24,7 @@ const jwtCheck = expressJwt({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: 'https://dev-gl5357kx.us.auth0.com/.well-known/jwks.json'
+        jwksUri: `${AUTH0_ISSUER_BASE_URL}.well-known/jwks.json`
         }),
         audience: AUTH0_AUD,
         issuer: AUTH0_ISSUER_BASE_URL,
