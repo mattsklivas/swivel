@@ -4,6 +4,13 @@ on:
   push:
     branches: [ main ]
 
+env:
+  AUTH0_SECRET: ${{ secrets.AUTH0_SECRET }}
+  AUTH0_BASE_URL: ${{ secrets.AUTH0_BASE_URL }}
+  AUTH0_ISSUER_BASE_URL: ${{ secrets.AUTH0_ISSUER_BASE_URL }}
+  AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+  AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+  AUTH0_AUD: ${{ secrets.AUTH0_AUD }}
 
 jobs:
   test_push_request:
@@ -19,13 +26,6 @@ jobs:
 
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build and save docker image
-        env:
-          AUTH0_SECRET: ${{ secrets.AUTH0_SECRET }}
-          AUTH0_BASE_URL: ${{ secrets.AUTH0_BASE_URL }}
-          AUTH0_ISSUER_BASE_URL: ${{ secrets.AUTH0_ISSUER_BASE_URL }}
-          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
-          AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
-          AUTH0_AUD: ${{ secrets.AUTH0_AUD }}
         with:
           image: mattsklivas/swivel
           registry: docker.io
