@@ -59,7 +59,7 @@ export default function Listing({accessToken}) {
                 // If user is on a different user's listing page
                 if (listing.details.creator !== user.nickname) {
                     // Set canSave flag
-                    if (userDetails.saved.reduce((previous, current) => {return previous.concat(current._id)}, []).includes(listing._id)) {
+                    if (!userDetails.saved.reduce((previous, current) => {return previous.concat(current._id)}, []).includes(listing._id)) {
                         setCanSave(true)
                     } else {
                         setCanSave(false)
@@ -67,8 +67,8 @@ export default function Listing({accessToken}) {
 
                     // Update the offer 
                     let offer = listing.offers.reduce((prev, cur) => userListings.some((x) => x._id === cur._id) ? cur._id : prev,[])
-                    if (offer) {
-                        setOfferID(offer)
+                    if (offer.length) {
+                        setOfferID(offer[0])
                     }
                 }
 

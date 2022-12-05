@@ -103,7 +103,7 @@ export default function ListingComponent(props) {
             }),
         })
         .then( () => {
-            canAccept(false)
+            setEnableAccept(false)
         })
     }
 
