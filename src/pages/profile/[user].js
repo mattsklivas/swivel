@@ -70,7 +70,7 @@ export default function Profile({accessToken}) {
     if (user && initialized) {
         return (
             <>
-                <HeaderComponent user={user}/>
+                <HeaderComponent user={user} token={token}/>
                 <div style={{backgroundColor: 'white', width: '95%', height: 'auto', borderRadius: '15px', padding: '5vh 5vh 3vh 5vh', marginLeft: 'auto', marginRight: 'auto'}}>
                     <Space size={25} align="start">
                         <div style={{display: 'flex', height: 200, width: 200, borderRadius: 5, border: '2px solid grey', backgroundColor: '#FFFFFF'}}>
